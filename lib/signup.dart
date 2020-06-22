@@ -2,6 +2,7 @@ import 'package:trident/login.dart';
 import 'package:flutter/material.dart';
 import 'package:trident/animation/FadeAnimation.dart';
 import 'package:toast/toast.dart';
+import 'package:trident/user_feed.dart';
 
 class SignupPage extends StatefulWidget {
   @override
@@ -73,6 +74,7 @@ class _SignupPageState extends State<SignupPage> {
                   minWidth: double.infinity,
                   height: 60,
                   onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => UserFeed()));
                     Toast.show("Email:"+emailTxtController.text.toString()
                     +" Name: "+nameTxtController.text.toString()+" Password: "
                     +passwordTxtController.text.toString(), context, duration: Toast.LENGTH_LONG,
