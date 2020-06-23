@@ -39,8 +39,8 @@ class HomePage extends StatelessWidget {
                   SizedBox(height: 20,),
                   FadeAnimation(1.2, Align(
                     alignment: Alignment.topLeft,
-                                      child: Text("The Ultimate ESports tournament platform.", 
-                    textAlign: TextAlign.center,
+                                      child: Text("The Ultimate! ESports tournament platform made by some crazy gamers.", 
+                    textAlign: TextAlign.left,
                     style: TextStyle(
                       color: Colors.grey[700],
                       fontSize: 15

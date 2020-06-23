@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
+import 'package:trident/home_page.dart';
+import 'package:trident/private_games.dart';
+import 'package:trident/user_page.dart';
 
 class UserFeed extends StatefulWidget{
   @override
@@ -20,6 +23,7 @@ class _UserFeedState extends State<UserFeed>{
     _privateTab(),
     _meTab(),
   ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -133,32 +137,16 @@ _getNavBar(context) {
 
 // Tabs
 _homeTab(){
-return Scaffold(
-  extendBody: true,
-  backgroundColor: Colors.black,
-  body:   Container(
-      child: Center(child: Text("Home",style:TextStyle(color:Colors.white )))),
-);
+return GameHomePage();
 }
 
 _privateTab(){
-return Scaffold(
-  backgroundColor: Colors.blue,
-  extendBody: true,
-  body:   Container(
-      child: Center(child: Text("Private",style:TextStyle(color:Colors.black )))),
-);
+return PrivateGamesPage();
 }
 
 _meTab(){
-return Scaffold(
-  extendBody: true,
-  backgroundColor: Colors.amber,
-  body:   Container(
-      child: Center(child: Text("User",style:TextStyle(color:Colors.black )))),
-);
+return UserPage();
 }
-
 
 // Bottom App bar
 
