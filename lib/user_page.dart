@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
+import 'package:trident/account_details_page.dart';
 import 'package:trident/top_bar.dart';
+import 'package:trident/tournament_history_page.dart';
 
 class UserPage extends StatefulWidget{
   @override
@@ -13,84 +15,84 @@ class _UserPageState extends State<UserPage>{
     return Scaffold(
   extendBody: true,
   backgroundColor: Colors.white,
+  appBar: PreferredSize(
+    preferredSize: Size.fromHeight(250.0),
+      child: Stack(children:<Widget>[ TopBar(),
+      Padding(
+            padding: const EdgeInsets.fromLTRB(8, 8, 8, 35),
+            // TODO: Change username and image asset source to firestore
+            child: Align(alignment: Alignment.topCenter,
+                          child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          CircleAvatar(radius: 50,
+          backgroundColor: Colors.white,
+          child: CircleAvatar(radius:46,
+          child: ClipOval(child: Image.asset("assets/default_avatar.jpg")))),
+          Text("Username",style: TextStyle(fontSize: 25,color: Colors.white))
+        ],
+      ),
+            ),
+          )]),
+  ),
   body:   
   Wrap(
       children:<Widget>[ 
   Column(
     children: <Widget>[
-      Wrap(
-      children:<Widget> [
-      Stack(children:<Widget>[ TopBar(),
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(2, 55, 2, 1),
-            // TODO: Change username and image asset source to firestore
-            child: Column(
-              children: <Widget>[
-                CircleAvatar(radius: 50,backgroundColor: Colors.white,child: CircleAvatar(radius:46,child: ClipOval(child: Image.asset("assets/default_avatar.jpg")))),
-                Text("Username",style: TextStyle(fontSize: 25,color: Colors.white))
-              ],
-            ),
-          ),
-        )]),
-      ]),
       Container(
-          child: SafeArea(
-              bottom: true, 
-              top: false, 
-              left: false, 
-              right: false, 
-              child: ListView(
-              shrinkWrap: true,
-              padding: EdgeInsets.only(bottom:10),
-              children:  <Widget>[
-                _buildListItems('Create Tournament', 0),
-                _buildListItems('My Wallet', 1),
-                _buildListItems('Account details', 2),
-                _buildListItems('Tournament History', 3),
-                _buildListItems('Help', 4),
-                _buildListItems('feedback', 5),
-              ],
-            ),
-          )),
+          height: MediaQuery.of(context).size.height,
+          child: ListView(
+          shrinkWrap: true,
+          padding: EdgeInsets.only(bottom:10),
+          children:  <Widget>[
+            _buildListItems('Create Tournament', 0,context),
+            _buildListItems('My Wallet', 1,context),
+            _buildListItems('Account details', 2,context),
+            _buildListItems('Tournament History', 3,context),
+            _buildListItems('Help', 4,context),
+            _buildListItems('feedback', 5,context),
+          ],
+            )),
     ],
     ),
           ]),
   );
   }
 
-_buildListItems(label,index){
+_buildListItems(label,index,context){
   return Container(
     child:GestureDetector(child: Card(child: ListTile(title: Text(label),)),
     onTap: (){
       Toast.show(label,context);
-      // switch(index)
-      // {
-      //   case 0:
-      //       Toast.show(label,context);
-      //       break;
-      //   case 1:
-      //       Toast.show(label,context);
-      //       break;
+      switch(index)
+      {
+        case 0:
+            Toast.show(label,context);
+            break;
+        case 1:
+            Toast.show(label,context);
+            break;
 
-      //   case 2:
-      //       Toast.show(label,context);
-      //       break;
+        case 2:
+            Navigator.push(this.context, MaterialPageRoute(builder: (context) => AccountDetails()));
+            break;
 
-      //   case 3:
-      //       Toast.show(label,context);
-      //       break;
+        case 3:
+            Navigator.push(this.context, MaterialPageRoute(builder: (context) => TournamentHistoryPage()));
+            break;
 
-      //   case 4:
-      //       Toast.show(label,context);
-      //       break;
-      //   case 5:
-      //       Toast.show(label,context);
-      //       break;
-      //   default:
-      //       Toast.show('Oops! Something went wrong',context);
-      //       break;
-      // }
+        case 4:
+            Toast.show(label,context);
+            break;
+        case 5:
+            Toast.show(label,context);
+            break;
+        default:
+            Toast.show('Oops! Something went wrong',context);
+            break;
+      }
     },)
   );
 }
