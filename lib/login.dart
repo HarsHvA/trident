@@ -1,8 +1,8 @@
-import 'package:toast/toast.dart';
 import 'package:trident/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:trident/animation/FadeAnimation.dart';
 import 'package:trident/user_feed.dart';
+import 'package:trident/views/reset_password_page.dart';
 import 'package:trident/widgets/provider_widget.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 
@@ -147,27 +147,48 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       )),
-                  FadeAnimation(
-                      1.5,
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text("Don't have an account?"),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => SignupPage()));
-                            },
-                            child: Text(
-                              "Sign up",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 18),
+                  Column(children: <Widget>[
+                    FadeAnimation(
+                        1.5,
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ResetPasswordPage()));
+                          },
+                          child: Text(
+                            "Forgot Password!",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
-                        ],
-                      ))
+                        )),
+                    SizedBox(
+                      height: 5.0,
+                    ),
+                    FadeAnimation(
+                        1.6,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text("Don't have an account?"),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SignupPage()));
+                              },
+                              child: Text(
+                                "Sign up",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w600, fontSize: 18),
+                              ),
+                            ),
+                          ],
+                        ))
+                  ])
                 ],
               ),
             ),
@@ -184,6 +205,7 @@ class _LoginPageState extends State<LoginPage> {
       String uid = await auth.signIn(_email, _password);
       pr.hide();
       print(uid);
+      Navigator.pop(context);
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => UserFeed()));
     } catch (e) {
@@ -267,18 +289,19 @@ class _LoginPageState extends State<LoginPage> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
-              child: Icon(Icons.error_outline),
+              child: Icon(Icons.error_outline, color: Colors.white),
             ),
             Expanded(
               child: Text(
                 _error,
                 maxLines: 3,
+                style: TextStyle(color: Colors.white),
               ),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 8.0),
               child: IconButton(
-                icon: Icon(Icons.close),
+                icon: Icon(Icons.close, color: Colors.white),
                 onPressed: () {
                   setState(() {
                     _error = null;

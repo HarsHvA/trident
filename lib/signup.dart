@@ -1,5 +1,4 @@
 import 'package:progress_dialog/progress_dialog.dart';
-import 'package:toast/toast.dart';
 import 'package:trident/login.dart';
 import 'package:flutter/material.dart';
 import 'package:trident/animation/FadeAnimation.dart';
@@ -281,18 +280,19 @@ class _SignupPageState extends State<SignupPage> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
-              child: Icon(Icons.error_outline),
+              child: Icon(Icons.error_outline, color: Colors.white),
             ),
             Expanded(
               child: Text(
                 _error,
                 maxLines: 3,
+                style: TextStyle(color: Colors.white),
               ),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 8.0),
               child: IconButton(
-                icon: Icon(Icons.close),
+                icon: Icon(Icons.close, color: Colors.white),
                 onPressed: () {
                   setState(() {
                     _error = null;

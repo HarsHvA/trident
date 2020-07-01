@@ -42,7 +42,7 @@ class _OpeningPageState extends State<OpeningPage> {
                       Align(
                         alignment: Alignment.topLeft,
                         child: Text(
-                          "The Ultimate! ESports tournament platform made by some gamers.",
+                          "The Ultimate! ESports tournament platform made by gamers.",
                           textAlign: TextAlign.left,
                           style:
                               TextStyle(color: Colors.grey[700], fontSize: 15),
@@ -66,7 +66,7 @@ class _OpeningPageState extends State<OpeningPage> {
                         minWidth: double.infinity,
                         height: 60,
                         onPressed: () {
-                          Navigator.pushReplacement(
+                          Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => LoginPage()));
@@ -99,7 +99,7 @@ class _OpeningPageState extends State<OpeningPage> {
                           minWidth: double.infinity,
                           height: 60,
                           onPressed: () {
-                            Navigator.pushReplacement(
+                            Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => SignupPage()));

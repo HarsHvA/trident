@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
@@ -13,8 +14,10 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
+  String _username = "username";
   @override
   Widget build(BuildContext context) {
+    username();
     return Scaffold(
       extendBody: true,
       backgroundColor: Colors.white,
@@ -23,7 +26,7 @@ class _UserPageState extends State<UserPage> {
         child: Stack(children: <Widget>[
           TopBar(),
           Padding(
-            padding: const EdgeInsets.fromLTRB(8, 8, 8, 35),
+            padding: const EdgeInsets.fromLTRB(8, 8, 8, 50),
             // TODO: Change username and image asset source to firestore
             child: Align(
               alignment: Alignment.topCenter,
@@ -39,7 +42,7 @@ class _UserPageState extends State<UserPage> {
                           child: ClipOval(
                               child:
                                   Image.asset("assets/default_avatar.jpg")))),
-                  Text("Username",
+                  Text(_username,
                       style: TextStyle(fontSize: 25, color: Colors.white))
                 ],
               ),
@@ -69,6 +72,22 @@ class _UserPageState extends State<UserPage> {
         ),
       ]),
     );
+  }
+
+  username() async {
+    try {
+      FirebaseUser user = await FirebaseAuth.instance.currentUser();
+      String name = user.displayName;
+      setState(() {
+        _username = name;
+      });
+    } catch (e) {
+      print(e.message);
+    }
+  }
+
+  String name() {
+    return username();
   }
 
   _buildListItems(label, index, context) {
