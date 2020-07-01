@@ -1,3 +1,5 @@
+import 'package:progress_dialog/progress_dialog.dart';
+import 'package:toast/toast.dart';
 import 'package:trident/login.dart';
 import 'package:flutter/material.dart';
 import 'package:trident/animation/FadeAnimation.dart';
@@ -12,13 +14,30 @@ class SignupPage extends StatefulWidget {
 class _SignupPageState extends State<SignupPage> {
   String textFieldLabel;
   final formKey = GlobalKey<FormState>();
-  String _email, _password, _name;
-  TextEditingController emailTxtController = TextEditingController();
-  TextEditingController nameTxtController = TextEditingController();
-  TextEditingController passwordTxtController = TextEditingController();
+  String _email, _password, _name, _error;
+  bool _autoValidate = false;
+  ProgressDialog pr;
 
   @override
   Widget build(BuildContext context) {
+    final _height = MediaQuery.of(context).size.height;
+    pr = ProgressDialog(context,
+        type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
+    pr.style(
+      message: "Please wait...",
+      borderRadius: 5.0,
+      padding: EdgeInsets.all(25),
+      backgroundColor: Colors.white,
+      progressWidget: CircularProgressIndicator(
+        valueColor: new AlwaysStoppedAnimation<Color>(Colors.red.shade900),
+      ),
+      elevation: 10.0,
+      insetAnimCurve: Curves.easeInOut,
+      progressTextStyle: TextStyle(
+          color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
+      messageTextStyle: TextStyle(
+          color: Colors.black, fontSize: 12.0, fontWeight: FontWeight.w600),
+    );
     return Scaffold(
         resizeToAvoidBottomInset: true,
         backgroundColor: Colors.white,
@@ -47,6 +66,9 @@ class _SignupPageState extends State<SignupPage> {
                 children: <Widget>[
                   Column(
                     children: <Widget>[
+                      SizedBox(height: _height * 0.025),
+                      showAlert(),
+                      SizedBox(height: _height * 0.025),
                       FadeAnimation(
                           1,
                           Text(
@@ -68,25 +90,22 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                   Form(
                     key: formKey,
+                    autovalidate: _autoValidate,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
                         FadeAnimation(
                             1.2,
                             makeInput(
-                              label: "Email",
-                            )),
-                        FadeAnimation(
-                            1.3,
-                            makeInput(
-                              label: "Name",
-                            )),
+                                label: "Email", validator: validateEmail)),
+                        FadeAnimation(1.3,
+                            makeInput(label: "Name", validator: validateName)),
                         FadeAnimation(
                             1.4,
                             makeInput(
-                              label: "Password",
-                              obscureText: true,
-                            )),
+                                label: "Password",
+                                obscureText: true,
+                                validator: validatePassword)),
                         FadeAnimation(
                             1.5,
                             Container(
@@ -104,7 +123,11 @@ class _SignupPageState extends State<SignupPage> {
                                 height: 60,
                                 onPressed: () {
                                   formKey.currentState.save();
-                                  submit();
+                                  if (formKey.currentState.validate()) {
+                                    submit();
+                                  } else {
+                                    setState(() => _autoValidate = true);
+                                  }
                                 },
                                 color: Colors.greenAccent,
                                 elevation: 0,
@@ -152,7 +175,7 @@ class _SignupPageState extends State<SignupPage> {
         ));
   }
 
-  Widget makeInput({label, obscureText = false}) {
+  Widget makeInput({label, obscureText = false, validator}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -165,6 +188,7 @@ class _SignupPageState extends State<SignupPage> {
           height: 5,
         ),
         TextFormField(
+          validator: validator,
           obscureText: obscureText,
           onSaved: (value) {
             switch (label) {
@@ -197,15 +221,91 @@ class _SignupPageState extends State<SignupPage> {
 
   void submit() async {
     try {
+      pr.show();
       final auth = Provider.of(context).auth;
       String uid =
           await auth.createUserWithEmailAndPassword(_email, _password, _name);
 
       print(uid);
+      pr.hide();
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => UserFeed()));
     } catch (e) {
+      setState(() {
+        _error = e.message;
+      });
+      pr.hide();
       print(e);
     }
+  }
+
+  String validateName(String value) {
+    String patttern = r'(^[a-zA-Z ]*$)';
+    RegExp regExp = new RegExp(patttern);
+    if (value.length == 0) {
+      return "Name is Required";
+    } else if (!regExp.hasMatch(value)) {
+      return "Name must be a-z and A-Z";
+    }
+    return null;
+  }
+
+  String validatePassword(String value) {
+    if (value.length < 8) {
+      return 'Password should be of 8 digit or more';
+    } else {
+      return null;
+    }
+  }
+
+  String validateEmail(String value) {
+    String pattern =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regExp = new RegExp(pattern);
+    if (value.length == 0) {
+      return "Email is Required";
+    } else if (!regExp.hasMatch(value)) {
+      return "Invalid Email";
+    } else {
+      return null;
+    }
+  }
+
+  Widget showAlert() {
+    if (_error != null) {
+      return Container(
+        color: Colors.red.shade900,
+        width: double.infinity,
+        padding: EdgeInsets.all(8.0),
+        child: Row(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Icon(Icons.error_outline),
+            ),
+            Expanded(
+              child: Text(
+                _error,
+                maxLines: 3,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: IconButton(
+                icon: Icon(Icons.close),
+                onPressed: () {
+                  setState(() {
+                    _error = null;
+                  });
+                },
+              ),
+            )
+          ],
+        ),
+      );
+    }
+    return SizedBox(
+      height: 0,
+    );
   }
 }

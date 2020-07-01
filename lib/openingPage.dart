@@ -66,7 +66,7 @@ class _OpeningPageState extends State<OpeningPage> {
                         minWidth: double.infinity,
                         height: 60,
                         onPressed: () {
-                          Navigator.push(
+                          Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => LoginPage()));
@@ -99,7 +99,7 @@ class _OpeningPageState extends State<OpeningPage> {
                           minWidth: double.infinity,
                           height: 60,
                           onPressed: () {
-                            Navigator.push(
+                            Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => SignupPage()));

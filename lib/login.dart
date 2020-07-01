@@ -1,8 +1,10 @@
+import 'package:toast/toast.dart';
 import 'package:trident/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:trident/animation/FadeAnimation.dart';
 import 'package:trident/user_feed.dart';
 import 'package:trident/widgets/provider_widget.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -11,12 +13,30 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
-  String _email, _password;
-  TextEditingController emailTxtController = TextEditingController();
-  TextEditingController passwordTxtController = TextEditingController();
+  String _email, _password, _error;
+  bool _autoValidate = false;
+  ProgressDialog pr;
 
   @override
   Widget build(BuildContext context) {
+    final _height = MediaQuery.of(context).size.height;
+    pr = ProgressDialog(context,
+        type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
+    pr.style(
+      message: "Please wait...",
+      borderRadius: 5.0,
+      padding: EdgeInsets.all(25),
+      backgroundColor: Colors.white,
+      progressWidget: CircularProgressIndicator(
+        valueColor: new AlwaysStoppedAnimation<Color>(Colors.red.shade900),
+      ),
+      elevation: 10.0,
+      insetAnimCurve: Curves.easeInOut,
+      progressTextStyle: TextStyle(
+          color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
+      messageTextStyle: TextStyle(
+          color: Colors.black, fontSize: 12.0, fontWeight: FontWeight.w600),
+    );
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
@@ -41,6 +61,9 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
+            SizedBox(height: _height * 0.025),
+            showAlert(),
+            SizedBox(height: _height * 0.025),
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -70,19 +93,19 @@ class _LoginPageState extends State<LoginPage> {
                     padding: EdgeInsets.symmetric(horizontal: 40),
                     child: Form(
                       key: formKey,
+                      autovalidate: _autoValidate,
                       child: Column(
                         children: <Widget>[
                           FadeAnimation(
                               1.2,
                               makeInput(
-                                label: "Email",
-                              )),
+                                  label: "Email", validator: validateEmail)),
                           FadeAnimation(
                               1.3,
                               makeInput(
-                                label: "Password",
-                                obscureText: true,
-                              )),
+                                  label: "Password",
+                                  obscureText: true,
+                                  validator: validatePassword))
                         ],
                       ),
                     ),
@@ -105,8 +128,12 @@ class _LoginPageState extends State<LoginPage> {
                             minWidth: double.infinity,
                             height: 60,
                             onPressed: () {
-                              formKey.currentState.save();
-                              submit();
+                              if (formKey.currentState.validate()) {
+                                formKey.currentState.save();
+                                submit();
+                              } else {
+                                setState(() => _autoValidate = true);
+                              }
                             },
                             color: Colors.greenAccent,
                             elevation: 0,
@@ -152,17 +179,44 @@ class _LoginPageState extends State<LoginPage> {
 
   void submit() async {
     try {
+      pr.show();
       final auth = Provider.of(context).auth;
       String uid = await auth.signIn(_email, _password);
+      pr.hide();
       print(uid);
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => UserFeed()));
     } catch (e) {
+      setState(() {
+        _error = e.message;
+      });
+      pr.hide();
       print(e);
     }
   }
 
-  Widget makeInput({label, obscureText = false}) {
+  String validatePassword(String value) {
+    if (value.length < 8) {
+      return 'Invalid Password';
+    } else {
+      return null;
+    }
+  }
+
+  String validateEmail(String value) {
+    String pattern =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regExp = new RegExp(pattern);
+    if (value.length == 0) {
+      return "Email is Required";
+    } else if (!regExp.hasMatch(value)) {
+      return "Invalid Email";
+    } else {
+      return null;
+    }
+  }
+
+  Widget makeInput({label, obscureText = false, validator}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -175,6 +229,7 @@ class _LoginPageState extends State<LoginPage> {
           height: 5,
         ),
         TextFormField(
+          validator: validator,
           obscureText: obscureText,
           onSaved: (newValue) {
             switch (label) {
@@ -199,6 +254,44 @@ class _LoginPageState extends State<LoginPage> {
           height: 30,
         ),
       ],
+    );
+  }
+
+  Widget showAlert() {
+    if (_error != null) {
+      return Container(
+        color: Colors.red.shade900,
+        width: double.infinity,
+        padding: EdgeInsets.all(8.0),
+        child: Row(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Icon(Icons.error_outline),
+            ),
+            Expanded(
+              child: Text(
+                _error,
+                maxLines: 3,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: IconButton(
+                icon: Icon(Icons.close),
+                onPressed: () {
+                  setState(() {
+                    _error = null;
+                  });
+                },
+              ),
+            )
+          ],
+        ),
+      );
+    }
+    return SizedBox(
+      height: 0,
     );
   }
 }
