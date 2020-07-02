@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:trident/services/database_services.dart';
 
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -15,6 +16,7 @@ class AuthService {
     userUpdateName.displayName = name;
     await currentUser.user.updateProfile(userUpdateName);
     await currentUser.user.reload();
+    DatabaseService(uid: currentUser.user.uid).updateUserData(name, email, '0');
     return currentUser.user.uid;
   }
 
@@ -32,5 +34,16 @@ class AuthService {
 
   Future sendPasswordResetEmail(String email) async {
     return await _firebaseAuth.sendPasswordResetEmail(email: email);
+  }
+
+  Future<String> username() async {
+    try {
+      FirebaseUser user = await _firebaseAuth.currentUser();
+      String name = user.displayName;
+      return name;
+    } catch (e) {
+      print(e.message);
+      return "";
+    }
   }
 }

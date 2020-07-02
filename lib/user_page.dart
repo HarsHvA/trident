@@ -1,11 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
-import 'package:trident/account_details_page.dart';
 import 'package:trident/openingPage.dart';
 import 'package:trident/top_bar.dart';
-import 'package:trident/tournament_history_page.dart';
+import 'package:trident/views/account_details_page.dart';
+import 'package:trident/views/tournament_history_page.dart';
 import 'package:trident/widgets/provider_widget.dart';
 
 class UserPage extends StatefulWidget {
@@ -14,7 +13,7 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
-  String _username = "username";
+  String _username = "";
   @override
   Widget build(BuildContext context) {
     username();
@@ -59,13 +58,12 @@ class _UserPageState extends State<UserPage> {
                   shrinkWrap: true,
                   padding: EdgeInsets.only(bottom: 10),
                   children: <Widget>[
-                    _buildListItems('Create Tournament', 0, context),
-                    _buildListItems('My Wallet', 1, context),
-                    _buildListItems('Account details', 2, context),
-                    _buildListItems('Tournament History', 3, context),
-                    _buildListItems('Help', 4, context),
-                    _buildListItems('feedback', 5, context),
-                    _buildListItems('Logout', 6, context),
+                    _buildListItems('My Wallet', 0, context),
+                    _buildListItems('Account details', 1, context),
+                    _buildListItems('Tournament History', 2, context),
+                    _buildListItems('Help', 3, context),
+                    _buildListItems('feedback', 4, context),
+                    _buildListItems('Logout', 5, context),
                   ],
                 )),
           ],
@@ -75,19 +73,13 @@ class _UserPageState extends State<UserPage> {
   }
 
   username() async {
-    try {
-      FirebaseUser user = await FirebaseAuth.instance.currentUser();
-      String name = user.displayName;
+    final _auth = Provider.of(context).auth;
+    String name = await _auth.username();
+    if (this.mounted) {
       setState(() {
         _username = name;
       });
-    } catch (e) {
-      print(e.message);
     }
-  }
-
-  String name() {
-    return username();
   }
 
   _buildListItems(label, index, context) {
@@ -103,29 +95,26 @@ class _UserPageState extends State<UserPage> {
           case 0:
             Toast.show(label, context);
             break;
-          case 1:
-            Toast.show(label, context);
-            break;
 
-          case 2:
+          case 1:
             Navigator.push(this.context,
                 MaterialPageRoute(builder: (context) => AccountDetails()));
             break;
 
-          case 3:
+          case 2:
             Navigator.push(
                 this.context,
                 MaterialPageRoute(
                     builder: (context) => TournamentHistoryPage()));
             break;
 
+          case 3:
+            Toast.show(label, context);
+            break;
           case 4:
             Toast.show(label, context);
             break;
           case 5:
-            Toast.show(label, context);
-            break;
-          case 6:
             _logout();
             break;
           default:

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:trident/home_page.dart';
-import 'package:trident/private_games.dart';
+import 'package:trident/views/ongoing_games_tab.dart';
+import 'package:trident/views/user_home_tab.dart';
 import 'package:trident/user_page.dart';
 
 class UserFeed extends StatefulWidget {
@@ -9,15 +9,10 @@ class UserFeed extends StatefulWidget {
   _UserFeedState createState() => _UserFeedState();
 }
 
-class _UserFeedState extends State<UserFeed> {
+class _UserFeedState extends State<UserFeed>
+    with AutomaticKeepAliveClientMixin {
   int currentIndex = 0;
   int _selectedIndex = 0;
-  double buttonIconPadding = 120;
-
-  bool homeState = true;
-  bool privateState = false;
-  bool userState = false;
-  bool barVisibility = true;
 
   var buttonIcon = Icons.arrow_drop_down;
 
@@ -28,24 +23,18 @@ class _UserFeedState extends State<UserFeed> {
   ];
 
   _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (this.mounted) {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         extendBody: true,
-        body: Stack(children: <Widget>[
-          tabs[_selectedIndex],
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Padding(
-              padding: new EdgeInsets.fromLTRB(1, 1, 25, buttonIconPadding),
-            ),
-          ),
-        ]),
+        body: tabs[_selectedIndex],
         bottomNavigationBar: BottomNavigationBar(
           backgroundColor: Colors.white,
           elevation: 25,
@@ -68,6 +57,9 @@ class _UserFeedState extends State<UserFeed> {
           onTap: _onItemTapped,
         ));
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 // Tabs
@@ -76,7 +68,7 @@ _homeTab() {
 }
 
 _privateTab() {
-  return PrivateGamesPage();
+  return OngoingGamesTab();
 }
 
 _meTab() {
