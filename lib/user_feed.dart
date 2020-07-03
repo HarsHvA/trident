@@ -10,8 +10,8 @@ class UserFeed extends StatefulWidget {
 }
 
 class _UserFeedState extends State<UserFeed> {
-  int currentIndex = 1;
-  int _selectedIndex = 1;
+  int currentIndex = 0;
+  int _selectedIndex = 0;
 
   var buttonIcon = Icons.arrow_drop_down;
 

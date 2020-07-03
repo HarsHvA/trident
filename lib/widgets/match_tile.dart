@@ -49,7 +49,7 @@ class MatchTile extends StatelessWidget {
                                 AutoSizeText(
                                   matches.name + " - Match-#" + matches.matchNo,
                                   style: TextStyle(
-                                      fontSize: 30, color: Colors.white),
+                                      fontSize: 25, color: Colors.white),
                                 ),
                                 AutoSizeText(matches.game,
                                     style: TextStyle(

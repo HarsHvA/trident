@@ -34,7 +34,24 @@ class DatabaseService {
     }).toList();
   }
 
-  Stream<List<Matches>> get matches {
-    return matchesCollection.snapshots().map(_matchListFromSnapShot);
+  Stream<List<Matches>> get ongoingMatches {
+    return matchesCollection
+        .where('status', isEqualTo: 'Live')
+        .snapshots()
+        .map(_matchListFromSnapShot);
+  }
+
+  Stream<List<Matches>> get upcomingMatches {
+    return matchesCollection
+        .where('status', isEqualTo: 'Upcoming')
+        .snapshots()
+        .map(_matchListFromSnapShot);
+  }
+
+  Stream<List<Matches>> get myMatches {
+    return matchesCollection
+        .where('uid', isEqualTo: uid)
+        .snapshots()
+        .map(_matchListFromSnapShot);
   }
 }
