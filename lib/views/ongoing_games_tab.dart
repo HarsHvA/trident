@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/percent_indicator.dart';
+import 'package:provider/provider.dart';
+import 'package:trident/models/match_models.dart';
+import 'package:trident/services/database_services.dart';
+import 'package:trident/widgets/match_lists.dart';
 
 class OngoingGamesTab extends StatefulWidget {
   @override
@@ -7,90 +10,19 @@ class OngoingGamesTab extends StatefulWidget {
 }
 
 class _OngoingGamesTabState extends State<OngoingGamesTab> {
+  final DatabaseService databaseService = DatabaseService();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return StreamProvider<List<Matches>>.value(
+      initialData: List(),
+      value: databaseService.matches,
+      child: Scaffold(
         extendBody: true,
-        body: Container(
-          child: Center(
-            child: Card(
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-                side: BorderSide(
-                  color: Colors.black,
-                  width: 1.0,
-                ),
-              ),
-              child: Wrap(
-                children: <Widget>[
-                  Card(
-                    semanticContainer: true,
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    child: Image.network(
-                      'https://cdn.vox-cdn.com/thumbor/eGwtGUFjQR-OqWIYuBZkEA0LXIs=/0x0:2560x1440/1200x675/filters:focal(1076x516:1484x924)/cdn.vox-cdn.com/uploads/chorus_image/image/66532267/kv.0.jpg',
-                      fit: BoxFit.fill,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    elevation: 5,
-                    margin: EdgeInsets.all(10),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text(
-                                  "Solo adventure",
-                                  style: TextStyle(fontSize: 25),
-                                ),
-                                Text("Time: 22:00",
-                                    style: TextStyle(fontSize: 20)),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                LinearPercentIndicator(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.5,
-                                  lineHeight: 5.0,
-                                  percent: 0.5,
-                                  backgroundColor: Colors.grey,
-                                  progressColor: Colors.blue,
-                                ),
-                                Text("100/100",
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                    ))
-                              ],
-                            ),
-                          ],
-                        ),
-                        Container(
-                          alignment: Alignment.bottomRight,
-                          child: RaisedButton(
-                              disabledColor: Colors.green,
-                              child: Text("Join"),
-                              onPressed: null),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        ));
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: MatchLists(),
+        ),
+      ),
+    );
   }
 }

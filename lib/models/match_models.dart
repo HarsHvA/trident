@@ -1,18 +1,26 @@
 class Matches {
   String game;
   String name;
-  String mode;
   String status;
-  int ticket;
-  int noOfParticipants;
-  String image;
+  String ticket;
+  String imageUrl;
+  String map;
+  String matchNo;
+  String maxParticipants;
+  String perKill;
+  String prizePool;
+  // Timestamp time;
 
-  Matches(
-      {this.game,
-      this.name,
-      this.mode,
-      this.status,
-      this.ticket,
-      this.noOfParticipants,
-      this.image});
+  Matches({
+    this.game,
+    this.name,
+    this.status,
+    this.ticket,
+    this.imageUrl,
+    this.map,
+    this.matchNo,
+    this.maxParticipants,
+    this.perKill,
+    this.prizePool,
+  });
 }

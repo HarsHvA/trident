@@ -9,10 +9,9 @@ class UserFeed extends StatefulWidget {
   _UserFeedState createState() => _UserFeedState();
 }
 
-class _UserFeedState extends State<UserFeed>
-    with AutomaticKeepAliveClientMixin {
-  int currentIndex = 0;
-  int _selectedIndex = 0;
+class _UserFeedState extends State<UserFeed> {
+  int currentIndex = 1;
+  int _selectedIndex = 1;
 
   var buttonIcon = Icons.arrow_drop_down;
 
@@ -57,9 +56,6 @@ class _UserFeedState extends State<UserFeed>
           onTap: _onItemTapped,
         ));
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }
 
 // Tabs
