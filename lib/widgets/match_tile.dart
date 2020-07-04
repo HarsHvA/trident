@@ -1,13 +1,23 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:toast/toast.dart';
+import 'package:trident/models/constants.dart';
 import 'package:trident/models/match_models.dart';
+import 'package:trident/services/database_services.dart';
+import 'package:trident/views/match_details_page.dart';
 
 class MatchTile extends StatelessWidget {
   final Matches matches;
   MatchTile({this.matches});
 
+  String _gameName;
+  TextEditingController gameNameController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+    double unitHeightValue = MediaQuery.of(context).size.height * 0.01;
+    double unitWidthValue = MediaQuery.of(context).size.width * 0.01;
+
     return Container(
       child: Center(
         child: Card(
@@ -48,12 +58,15 @@ class MatchTile extends StatelessWidget {
                               children: <Widget>[
                                 AutoSizeText(
                                   matches.name + " - Match-#" + matches.matchNo,
+                                  softWrap: true,
                                   style: TextStyle(
-                                      fontSize: 25, color: Colors.white),
+                                      fontSize: unitHeightValue * 2.5,
+                                      color: Colors.white),
                                 ),
                                 AutoSizeText(matches.game,
                                     style: TextStyle(
-                                        fontSize: 20, color: Colors.white)),
+                                        fontSize: unitHeightValue * 2,
+                                        color: Colors.white)),
                               ],
                             ),
                           ],
@@ -71,7 +84,7 @@ class MatchTile extends StatelessWidget {
                                     matches.status,
                                     style: TextStyle(
                                         backgroundColor: Colors.red.shade900,
-                                        fontSize: 15,
+                                        fontSize: unitHeightValue * 1.5,
                                         color: Colors.white),
                                   )),
                               Padding(
@@ -79,7 +92,8 @@ class MatchTile extends StatelessWidget {
                                 child: AutoSizeText(
                                     "100" + "/" + matches.maxParticipants,
                                     style: TextStyle(
-                                        fontSize: 20, color: Colors.white)),
+                                        fontSize: unitHeightValue * 2.5,
+                                        color: Colors.white)),
                               ),
                             ],
                           ),
@@ -93,7 +107,8 @@ class MatchTile extends StatelessWidget {
                             child: AutoSizeText(
                                 "\u20B9" + matches.perKill + "/kill",
                                 style: TextStyle(
-                                    fontSize: 20, color: Colors.white)),
+                                    fontSize: unitHeightValue * 2.5,
+                                    color: Colors.white)),
                           ),
                         ),
                       )
@@ -112,8 +127,7 @@ class MatchTile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Table(
-                      defaultColumnWidth: FixedColumnWidth(
-                          MediaQuery.of(context).size.width / 3),
+                      defaultColumnWidth: FixedColumnWidth(unitWidthValue * 33),
                       border: TableBorder.all(
                           color: Colors.black26,
                           width: 1,
@@ -126,7 +140,11 @@ class MatchTile extends StatelessWidget {
                               verticalAlignment:
                                   TableCellVerticalAlignment.fill,
                               child: Center(
-                                  child: AutoSizeText("2 July 2020 at 23:00")))
+                                  child: AutoSizeText(
+                                "2 July 2020 at 23:00",
+                                style:
+                                    TextStyle(fontSize: unitHeightValue * 1.5),
+                              )))
                         ]),
                         TableRow(children: [
                           TableCell(
@@ -136,7 +154,7 @@ class MatchTile extends StatelessWidget {
                                   child: Padding(
                                 padding: const EdgeInsets.all(2.0),
                                 child: SizedBox(
-                                  height: 20,
+                                  height: unitHeightValue * 2.5,
                                   child:
                                       ImageIcon(AssetImage("assets/cup.png")),
                                 ),
@@ -146,17 +164,26 @@ class MatchTile extends StatelessWidget {
                                   TableCellVerticalAlignment.fill,
                               child: Center(
                                   child: AutoSizeText(
-                                      "\u20B9" + matches.prizePool)))
+                                      "\u20B9" + matches.prizePool,
+                                      style: TextStyle(
+                                          fontSize: unitHeightValue * 1.5))))
                         ]),
                       ],
                     ),
                     Container(
                       alignment: Alignment.bottomRight,
+                      width: unitWidthValue * 20,
                       child: RaisedButton(
-                          disabledColor: Colors.green,
-                          child: Text("Join"),
-                          onPressed: null),
-                    ),
+                        color: Colors.green,
+                        child: Text(
+                          "Join",
+                          style: TextStyle(fontSize: unitHeightValue * 2),
+                        ),
+                        onPressed: () {
+                          _showbottomsheet(context);
+                        },
+                      ),
+                    )
                   ],
                 ),
               ),
@@ -165,5 +192,117 @@ class MatchTile extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _showbottomsheet(context) {
+    showModalBottomSheet(
+        context: context,
+        enableDrag: false,
+        builder: (BuildContext bc) {
+          return Container(
+            child: Wrap(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "Enter your game Id",
+                          style: TextStyle(
+                              fontSize: (MediaQuery.of(context).size.height *
+                                  0.01 *
+                                  4)),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextField(
+                          controller: gameNameController,
+                          onSubmitted: (newValue) {
+                            newValue = _gameName;
+                          },
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 0, horizontal: 10),
+                            enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.grey[400])),
+                            border: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.grey[400])),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          padding: EdgeInsets.only(top: 3, left: 3),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              border: Border(
+                                bottom: BorderSide(color: Colors.black),
+                                top: BorderSide(color: Colors.black),
+                                left: BorderSide(color: Colors.black),
+                                right: BorderSide(color: Colors.black),
+                              )),
+                          child: MaterialButton(
+                            minWidth: double.infinity,
+                            height: 60,
+                            onPressed: () {
+                              if (Constants().uid != null) {
+                                Navigator.of(context, rootNavigator: true).push(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            MatchesDetailsPage(
+                                              matchId: matches.id,
+                                            )));
+                              } else {
+                                _gameId(context);
+                              }
+                            },
+                            color: Colors.red,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50)),
+                            child: Text(
+                              "Submit",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w600, fontSize: 18),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
+  String getGameId(context) {
+    _gameName = gameNameController.text;
+    if (_gameName != null) {
+      return _gameName;
+    } else {
+      Toast.show('Please enter a valid name', context);
+      return null;
+    }
+  }
+
+  void _gameId(context) async {
+    if (getGameId != null) {
+      DatabaseService databaseService = DatabaseService();
+      await databaseService.updateUserGameName(
+          matches.game, getGameId(context));
+      Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(
+          builder: (context) => MatchesDetailsPage(
+                matchId: matches.id,
+              )));
+    }
   }
 }

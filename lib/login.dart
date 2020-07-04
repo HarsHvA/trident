@@ -20,6 +20,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final _height = MediaQuery.of(context).size.height;
+    double unitHeightValue = MediaQuery.of(context).size.height * 0.01;
+    double unitWidthValue = MediaQuery.of(context).size.width * 0.01;
     pr = ProgressDialog(context,
         type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
     pr.style(
@@ -50,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
           },
           icon: Icon(
             Icons.arrow_back_ios,
-            size: 20,
+            size: unitHeightValue * 2,
             color: Colors.black,
           ),
         ),
@@ -75,17 +77,19 @@ class _LoginPageState extends State<LoginPage> {
                           Text(
                             "Login",
                             style: TextStyle(
-                                fontSize: 30, fontWeight: FontWeight.bold),
+                                fontSize: unitHeightValue * 3,
+                                fontWeight: FontWeight.bold),
                           )),
                       SizedBox(
-                        height: 20,
+                        height: unitHeightValue * 2,
                       ),
                       FadeAnimation(
                           1.2,
                           Text(
                             "Login to your account",
                             style: TextStyle(
-                                fontSize: 15, color: Colors.grey[700]),
+                                fontSize: unitHeightValue * 1.8,
+                                color: Colors.grey[700]),
                           )),
                     ],
                   ),
@@ -117,7 +121,8 @@ class _LoginPageState extends State<LoginPage> {
                         child: Container(
                           padding: EdgeInsets.only(top: 3, left: 3),
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50),
+                              borderRadius:
+                                  BorderRadius.circular(unitWidthValue * 8),
                               border: Border(
                                 bottom: BorderSide(color: Colors.black),
                                 top: BorderSide(color: Colors.black),
@@ -126,7 +131,7 @@ class _LoginPageState extends State<LoginPage> {
                               )),
                           child: MaterialButton(
                             minWidth: double.infinity,
-                            height: 60,
+                            height: unitHeightValue * 7,
                             onPressed: () {
                               if (formKey.currentState.validate()) {
                                 formKey.currentState.save();
@@ -142,7 +147,8 @@ class _LoginPageState extends State<LoginPage> {
                             child: Text(
                               "Login",
                               style: TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 18),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: unitHeightValue * 1.8),
                             ),
                           ),
                         ),
@@ -160,19 +166,22 @@ class _LoginPageState extends State<LoginPage> {
                           child: Text(
                             "Forgot Password!",
                             style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                            ),
+                                fontWeight: FontWeight.w500,
+                                fontSize: unitHeightValue * 1.7),
                           ),
                         )),
                     SizedBox(
-                      height: 5.0,
+                      height: unitHeightValue * 1,
                     ),
                     FadeAnimation(
                         1.6,
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            Text("Don't have an account?"),
+                            Text(
+                              "Don't have an account?",
+                              style: TextStyle(fontSize: unitHeightValue * 1.7),
+                            ),
                             GestureDetector(
                               onTap: () {
                                 Navigator.pushReplacement(
@@ -183,7 +192,8 @@ class _LoginPageState extends State<LoginPage> {
                               child: Text(
                                 "Sign up",
                                 style: TextStyle(
-                                    fontWeight: FontWeight.w600, fontSize: 18),
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: unitHeightValue * 2),
                               ),
                             ),
                           ],

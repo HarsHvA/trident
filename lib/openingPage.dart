@@ -11,6 +11,8 @@ class OpeningPage extends StatefulWidget {
 class _OpeningPageState extends State<OpeningPage> {
   @override
   Widget build(BuildContext context) {
+    double unitHeightValue = MediaQuery.of(context).size.height * 0.01;
+    double unitWidthValue = MediaQuery.of(context).size.width * 0.01;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -31,11 +33,12 @@ class _OpeningPageState extends State<OpeningPage> {
                         child: Text(
                           "Welcome to Trident!",
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 30),
+                              fontWeight: FontWeight.bold,
+                              fontSize: unitHeightValue * 4.1),
                         ),
                       )),
                   SizedBox(
-                    height: 20,
+                    height: unitHeightValue * 2,
                   ),
                   FadeAnimation(
                       1.2,
@@ -44,8 +47,9 @@ class _OpeningPageState extends State<OpeningPage> {
                         child: Text(
                           "The Ultimate! ESports tournament platform made by gamers.",
                           textAlign: TextAlign.left,
-                          style:
-                              TextStyle(color: Colors.grey[700], fontSize: 15),
+                          style: TextStyle(
+                              color: Colors.grey[700],
+                              fontSize: unitHeightValue * 1.6),
                         ),
                       )),
                 ],
@@ -64,7 +68,7 @@ class _OpeningPageState extends State<OpeningPage> {
                       1.5,
                       MaterialButton(
                         minWidth: double.infinity,
-                        height: 60,
+                        height: unitHeightValue * 7,
                         onPressed: () {
                           Navigator.push(
                               context,
@@ -73,22 +77,25 @@ class _OpeningPageState extends State<OpeningPage> {
                         },
                         shape: RoundedRectangleBorder(
                             side: BorderSide(color: Colors.black),
-                            borderRadius: BorderRadius.circular(50)),
+                            borderRadius:
+                                BorderRadius.circular(unitWidthValue * 8)),
                         child: Text(
                           "Login",
                           style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 18),
+                              fontWeight: FontWeight.w600,
+                              fontSize: unitHeightValue * 2),
                         ),
                       )),
                   SizedBox(
-                    height: 20,
+                    height: unitHeightValue * 2,
                   ),
                   FadeAnimation(
                       1.6,
                       Container(
                         padding: EdgeInsets.only(top: 3, left: 3),
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50),
+                            borderRadius:
+                                BorderRadius.circular(unitWidthValue * 8),
                             border: Border(
                               bottom: BorderSide(color: Colors.black),
                               top: BorderSide(color: Colors.black),
@@ -97,7 +104,7 @@ class _OpeningPageState extends State<OpeningPage> {
                             )),
                         child: MaterialButton(
                           minWidth: double.infinity,
-                          height: 60,
+                          height: unitHeightValue * 7,
                           onPressed: () {
                             Navigator.push(
                                 context,
@@ -107,11 +114,13 @@ class _OpeningPageState extends State<OpeningPage> {
                           color: Colors.red,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50)),
+                              borderRadius:
+                                  BorderRadius.circular(unitWidthValue * 8)),
                           child: Text(
                             "Sign up",
                             style: TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 18),
+                                fontWeight: FontWeight.w600,
+                                fontSize: unitHeightValue * 2),
                           ),
                         ),
                       ))

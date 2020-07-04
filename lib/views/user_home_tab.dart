@@ -13,6 +13,8 @@ class _GameHomePageState extends State<GameHomePage> {
   @override
   Widget build(BuildContext context) {
     FlutterStatusbarcolor.setStatusBarColor(Colors.red.shade900);
+
+    double unitHeightValue = MediaQuery.of(context).size.height * 0.01;
     return SafeArea(
       child: MaterialApp(
           debugShowCheckedModeBanner: false,
@@ -32,13 +34,17 @@ class _GameHomePageState extends State<GameHomePage> {
                           Tab(
                             child: Text(
                               'Upcoming',
-                              style: TextStyle(color: Colors.white),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: unitHeightValue * 1.6),
                             ),
                           ),
                           Tab(
                               child: Text(
                             'MyTournaments',
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: unitHeightValue * 1.6),
                           ))
                         ],
                       ),

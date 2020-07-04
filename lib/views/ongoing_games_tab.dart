@@ -15,6 +15,7 @@ class _OngoingGamesTabState extends State<OngoingGamesTab> {
   final DatabaseService databaseService = DatabaseService();
   @override
   Widget build(BuildContext context) {
+    double unitHeightValue = MediaQuery.of(context).size.height * 0.01;
     return StreamProvider<List<Matches>>.value(
       initialData: List(),
       value: databaseService.ongoingMatches,
@@ -29,7 +30,8 @@ class _OngoingGamesTabState extends State<OngoingGamesTab> {
                 alignment: Alignment.center,
                 child: AutoSizeText(
                   'LiveTournaments',
-                  style: TextStyle(color: Colors.white, fontSize: 20),
+                  style: TextStyle(
+                      color: Colors.white, fontSize: unitHeightValue * 2.5),
                 ),
               )
             ],

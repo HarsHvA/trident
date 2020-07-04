@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:trident/models/user_modal.dart';
 import 'package:trident/services/database_services.dart';
 
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   Stream<String> get onAuthStateChanged =>
       _firebaseAuth.onAuthStateChanged.map((FirebaseUser user) => user?.uid);
+
 // Email and password signUP
   Future<String> createUserWithEmailAndPassword(
       String email, String password, String name) async {
@@ -18,6 +20,16 @@ class AuthService {
     await currentUser.user.reload();
     DatabaseService(uid: currentUser.user.uid).updateUserData(name, email, '0');
     return currentUser.user.uid;
+  }
+
+  Future<String> uID() async {
+    final FirebaseUser user = await _firebaseAuth.currentUser();
+    final uid = user.uid;
+    return uid;
+  }
+
+  User _userFromFirebase(FirebaseUser user) {
+    return user != null ? User(uid: user.uid) : null;
   }
 
 // SignIn

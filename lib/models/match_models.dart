@@ -9,18 +9,19 @@ class Matches {
   String maxParticipants;
   String perKill;
   String prizePool;
+  String id;
   // Timestamp time;
 
-  Matches({
-    this.game,
-    this.name,
-    this.status,
-    this.ticket,
-    this.imageUrl,
-    this.map,
-    this.matchNo,
-    this.maxParticipants,
-    this.perKill,
-    this.prizePool,
-  });
+  Matches(
+      {this.game,
+      this.name,
+      this.status,
+      this.ticket,
+      this.imageUrl,
+      this.map,
+      this.matchNo,
+      this.maxParticipants,
+      this.perKill,
+      this.prizePool,
+      this.id});
 }

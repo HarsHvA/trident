@@ -16,6 +16,8 @@ class _UserPageState extends State<UserPage> {
   String _username = "";
   @override
   Widget build(BuildContext context) {
+    double unitHeightValue = MediaQuery.of(context).size.height * 0.01;
+    double unitWidthValue = MediaQuery.of(context).size.width * 0.01;
     username();
     return Scaffold(
       extendBody: true,
@@ -34,15 +36,16 @@ class _UserPageState extends State<UserPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   CircleAvatar(
-                      radius: 50,
+                      radius: unitWidthValue * 12,
                       backgroundColor: Colors.white,
                       child: CircleAvatar(
-                          radius: 46,
+                          radius: unitWidthValue * 11,
                           child: ClipOval(
                               child:
                                   Image.asset("assets/default_avatar.jpg")))),
                   Text(_username,
-                      style: TextStyle(fontSize: 25, color: Colors.white))
+                      style: TextStyle(
+                          fontSize: unitHeightValue * 2.5, color: Colors.white))
                 ],
               ),
             ),
@@ -53,9 +56,8 @@ class _UserPageState extends State<UserPage> {
         Column(
           children: <Widget>[
             Container(
-                height: MediaQuery.of(context).size.height,
+                height: MediaQuery.of(context).size.height / 2,
                 child: ListView(
-                  shrinkWrap: true,
                   padding: EdgeInsets.only(bottom: 10),
                   children: <Widget>[
                     _buildListItems('My Wallet', 0, context),
