@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Matches {
   String game;
   String name;
   String status;
-  String ticket;
+  int ticket;
   String imageUrl;
   String map;
   String matchNo;
@@ -10,7 +12,7 @@ class Matches {
   String perKill;
   String prizePool;
   String id;
-  // Timestamp time;
+  Timestamp time;
 
   Matches(
       {this.game,
@@ -23,5 +25,6 @@ class Matches {
       this.maxParticipants,
       this.perKill,
       this.prizePool,
-      this.id});
+      this.id,
+      this.time});
 }

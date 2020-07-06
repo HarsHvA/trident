@@ -19,27 +19,32 @@ class _OngoingGamesTabState extends State<OngoingGamesTab> {
     return StreamProvider<List<Matches>>.value(
       initialData: List(),
       value: databaseService.ongoingMatches,
-      child: Scaffold(
-        extendBody: true,
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(100),
-          child: Stack(
-            children: <Widget>[
-              TopBar(),
-              Align(
-                alignment: Alignment.center,
-                child: AutoSizeText(
-                  'LiveTournaments',
-                  style: TextStyle(
-                      color: Colors.white, fontSize: unitHeightValue * 2.5),
-                ),
-              )
-            ],
+      child: SafeArea(
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: Scaffold(
+            extendBody: true,
+            appBar: PreferredSize(
+              preferredSize: Size.fromHeight(80),
+              child: Stack(
+                children: <Widget>[
+                  TopBar(),
+                  Align(
+                    alignment: Alignment.center,
+                    child: AutoSizeText(
+                      'LiveTournaments',
+                      style: TextStyle(
+                          color: Colors.white, fontSize: unitHeightValue * 2.5),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            body: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+              child: MatchLists(),
+            ),
           ),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: MatchLists(),
         ),
       ),
     );

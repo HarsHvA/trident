@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:trident/models/match_models.dart';
-import 'package:trident/models/user_modal.dart';
+import 'package:trident/models/user_model.dart';
 import 'package:trident/services/auth_service.dart';
 
 class DatabaseService {
@@ -13,8 +13,11 @@ class DatabaseService {
   final CollectionReference matchesCollection =
       Firestore.instance.collection('customMatchRooms');
 
-  final CollectionReference inGameNameCollection =
-      Firestore.instance.collection('inGameName');
+  // final CollectionReference inGameNameCollection =
+  //     Firestore.instance.collection('inGameName');
+
+  final CollectionReference participantsCollection =
+      Firestore.instance.collection('participants');
 
   Future updateUserData(String name, String email, String wallet) async {
     return await usersCollection
@@ -27,20 +30,30 @@ class DatabaseService {
     return await usersCollection.document(userId).updateData({game: id});
   }
 
+  Future addMatchParticipants(matchId, gameName, name) async {
+    String userId = await AuthService().uID();
+    return await participantsCollection
+        .document(matchId)
+        .collection(userId)
+        .document(gameName)
+        .setData({'name': name});
+  }
+
   List<Matches> _matchListFromSnapShot(QuerySnapshot querySnapshot) {
     return querySnapshot.documents.map((e) {
       return Matches(
           game: e.data['game'] ?? '',
           name: e.data['name'] ?? '',
           status: e.data['status'] ?? '',
-          ticket: e.data['ticket'] ?? '',
+          ticket: e.data['ticket'] ?? 0,
           imageUrl: e.data['imageUrl'] ?? '',
           map: e.data['map'] ?? '',
           matchNo: e.data['matchNo'] ?? '',
           maxParticipants: e.data['maxParticipants'] ?? '',
           perKill: e.data['perKill'] ?? '',
           prizePool: e.data['prizePool'] ?? '',
-          id: e.documentID);
+          id: e.documentID,
+          time: e.data['time']);
     }).toList();
   }
 
@@ -64,4 +77,40 @@ class DatabaseService {
         .snapshots()
         .map(_matchListFromSnapShot);
   }
+
+  Stream<Matches> getMatchDetails(id) {
+    return matchesCollection.document(id).snapshots().map((value) {
+      return Matches(
+          game: value.data['game'] ?? '',
+          name: value.data['name'] ?? '',
+          status: value.data['status'] ?? '',
+          ticket: value.data['ticket'] ?? 0,
+          map: value.data['map'] ?? '',
+          matchNo: value.data['matchNo'] ?? '',
+          maxParticipants: value.data['maxParticipants'] ?? '',
+          perKill: value.data['perKill'] ?? '',
+          prizePool: value.data['prizePool'] ?? '',
+          time: value.data['time']);
+    });
+  }
+
+  Future<User> getUserData(game) async {
+    String userId = await AuthService().uID();
+    String name;
+    String email;
+    String gameName;
+    await usersCollection.document(userId).get().then((value) {
+      name = value.data['name'];
+      email = value.data['email'];
+      gameName = value.data[game];
+    });
+    return User(name: name, email: email, gameName: gameName);
+  }
 }
+
+// return User(
+//           name: value.data['name'],
+//           email: value.data['email'],
+//           walletMoney: value.data['walletMoney'],
+//           gameName: value.data[game]);
+//     });

@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
@@ -252,16 +254,13 @@ class MatchTile extends StatelessWidget {
                             minWidth: double.infinity,
                             height: 60,
                             onPressed: () {
-                              if (Constants().uid != null) {
-                                Navigator.of(context, rootNavigator: true).push(
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            MatchesDetailsPage(
-                                              matchId: matches.id,
-                                            )));
-                              } else {
-                                _gameId(context);
-                              }
+                              // _gameId(context);
+                              Navigator.of(context, rootNavigator: true)
+                                  .push(MaterialPageRoute(
+                                      builder: (context) => MatchesDetailsPage(
+                                            matchId: matches.id,
+                                            match: matches,
+                                          )));
                             },
                             color: Colors.red,
                             elevation: 0,
@@ -286,7 +285,7 @@ class MatchTile extends StatelessWidget {
 
   String getGameId(context) {
     _gameName = gameNameController.text;
-    if (_gameName != null) {
+    if (_gameName.isNotEmpty) {
       return _gameName;
     } else {
       Toast.show('Please enter a valid name', context);
@@ -295,13 +294,14 @@ class MatchTile extends StatelessWidget {
   }
 
   void _gameId(context) async {
-    if (getGameId != null) {
+    if (getGameId(context) != null) {
       DatabaseService databaseService = DatabaseService();
       await databaseService.updateUserGameName(
           matches.game, getGameId(context));
       Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(
           builder: (context) => MatchesDetailsPage(
                 matchId: matches.id,
+                match: matches,
               )));
     }
   }

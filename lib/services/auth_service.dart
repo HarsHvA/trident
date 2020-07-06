@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:trident/models/user_modal.dart';
 import 'package:trident/services/database_services.dart';
 
 class AuthService {
@@ -26,10 +25,6 @@ class AuthService {
     final FirebaseUser user = await _firebaseAuth.currentUser();
     final uid = user.uid;
     return uid;
-  }
-
-  User _userFromFirebase(FirebaseUser user) {
-    return user != null ? User(uid: user.uid) : null;
   }
 
 // SignIn
