@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:trident/models/match_models.dart';
+import 'package:trident/models/participant_models.dart';
 import 'package:trident/models/user_model.dart';
 import 'package:trident/services/auth_service.dart';
 
@@ -12,9 +15,6 @@ class DatabaseService {
 
   final CollectionReference matchesCollection =
       Firestore.instance.collection('customMatchRooms');
-
-  // final CollectionReference inGameNameCollection =
-  //     Firestore.instance.collection('inGameName');
 
   final CollectionReference participantsCollection =
       Firestore.instance.collection('participants');
@@ -32,11 +32,11 @@ class DatabaseService {
 
   Future addMatchParticipants(matchId, gameName, name) async {
     String userId = await AuthService().uID();
-    return await participantsCollection
-        .document(matchId)
-        .collection(userId)
-        .document(gameName)
-        .setData({'name': name});
+    return await participantsCollection.document(matchId).updateData({
+      'participants': FieldValue.arrayUnion([
+        {'name': name, 'gameName': gameName, 'uid': userId}
+      ])
+    });
   }
 
   List<Matches> _matchListFromSnapShot(QuerySnapshot querySnapshot) {
@@ -55,6 +55,21 @@ class DatabaseService {
           id: e.documentID,
           time: e.data['time']);
     }).toList();
+  }
+
+  Stream<List<Participants>> getParticipantList(matchId) {
+    return participantsCollection.document(matchId).snapshots().map((event) {
+      List<Participants> participantList = [];
+      List list = event.data['participants'];
+      for (var i = 0; i < list.length; i++) {
+        participantList.add(new Participants(
+            gameName: list[i]['gameName'],
+            name: list[i]['name'],
+            uid: list[i]['uid']));
+      }
+      print(participantList[1].name);
+      return participantList;
+    });
   }
 
   Stream<List<Matches>> get ongoingMatches {
@@ -107,10 +122,3 @@ class DatabaseService {
     return User(name: name, email: email, gameName: gameName);
   }
 }
-
-// return User(
-//           name: value.data['name'],
-//           email: value.data['email'],
-//           walletMoney: value.data['walletMoney'],
-//           gameName: value.data[game]);
-//     });

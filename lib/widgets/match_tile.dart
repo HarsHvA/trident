@@ -1,13 +1,12 @@
-import 'dart:ffi';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:toast/toast.dart';
-import 'package:trident/models/constants.dart';
 import 'package:trident/models/match_models.dart';
 import 'package:trident/services/database_services.dart';
 import 'package:trident/views/match_details_page.dart';
 
+// ignore: must_be_immutable
 class MatchTile extends StatelessWidget {
   final Matches matches;
   MatchTile({this.matches});
@@ -143,7 +142,7 @@ class MatchTile extends StatelessWidget {
                                   TableCellVerticalAlignment.fill,
                               child: Center(
                                   child: AutoSizeText(
-                                "2 July 2020 at 23:00",
+                                _gameTime(matches.time.toDate()),
                                 style:
                                     TextStyle(fontSize: unitHeightValue * 1.5),
                               )))
@@ -182,7 +181,7 @@ class MatchTile extends StatelessWidget {
                           style: TextStyle(fontSize: unitHeightValue * 2),
                         ),
                         onPressed: () {
-                          _showbottomsheet(context);
+                          _getUserGameName(context);
                         },
                       ),
                     )
@@ -194,6 +193,10 @@ class MatchTile extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  _gameTime(time) {
+    return DateFormat.yMMMd().add_jm().format(time);
   }
 
   void _showbottomsheet(context) {
@@ -254,13 +257,7 @@ class MatchTile extends StatelessWidget {
                             minWidth: double.infinity,
                             height: 60,
                             onPressed: () {
-                              // _gameId(context);
-                              Navigator.of(context, rootNavigator: true)
-                                  .push(MaterialPageRoute(
-                                      builder: (context) => MatchesDetailsPage(
-                                            matchId: matches.id,
-                                            match: matches,
-                                          )));
+                              _gameId(context);
                             },
                             color: Colors.red,
                             elevation: 0,
@@ -285,6 +282,7 @@ class MatchTile extends StatelessWidget {
 
   String getGameId(context) {
     _gameName = gameNameController.text;
+
     if (_gameName.isNotEmpty) {
       return _gameName;
     } else {
@@ -303,6 +301,22 @@ class MatchTile extends StatelessWidget {
                 matchId: matches.id,
                 match: matches,
               )));
+    }
+  }
+
+  _getUserGameName(context) async {
+    String gameName;
+    await DatabaseService().getUserData(matches.game).then((value) {
+      gameName = value.gameName;
+    });
+    if (gameName != null) {
+      Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(
+          builder: (context) => MatchesDetailsPage(
+                matchId: matches.id,
+                match: matches,
+              )));
+    } else {
+      _showbottomsheet(context);
     }
   }
 }
