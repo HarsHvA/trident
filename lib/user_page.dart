@@ -28,7 +28,6 @@ class _UserPageState extends State<UserPage> {
           TopBar(),
           Padding(
             padding: const EdgeInsets.fromLTRB(8, 8, 8, 50),
-            // TODO: Change username and image asset source to firestore
             child: Align(
               alignment: Alignment.topCenter,
               child: Column(

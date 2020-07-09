@@ -91,7 +91,9 @@ class MatchTile extends StatelessWidget {
                               Padding(
                                 padding: const EdgeInsets.all(5.0),
                                 child: AutoSizeText(
-                                    "100" + "/" + matches.maxParticipants,
+                                    "100" +
+                                        "/" +
+                                        matches.maxParticipants.toString(),
                                     style: TextStyle(
                                         fontSize: unitHeightValue * 2.5,
                                         color: Colors.white)),
@@ -177,7 +179,7 @@ class MatchTile extends StatelessWidget {
                       child: RaisedButton(
                         color: Colors.green,
                         child: Text(
-                          "Join",
+                          'View',
                           style: TextStyle(fontSize: unitHeightValue * 2),
                         ),
                         onPressed: () {

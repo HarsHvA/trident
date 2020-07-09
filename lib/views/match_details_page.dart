@@ -223,7 +223,18 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                   colorBrightness: Brightness.light,
                                   onPressed: () {
                                     _addUserAsParticipants(
-                                        matchId, snapshot.data.game);
+                                        matchId,
+                                        snapshot.data.game,
+                                        snapshot.data.name,
+                                        snapshot.data.ticket,
+                                        snapshot.data.status,
+                                        snapshot.data.imageUrl,
+                                        snapshot.data.map,
+                                        snapshot.data.matchNo,
+                                        snapshot.data.maxParticipants,
+                                        snapshot.data.perKill,
+                                        snapshot.data.prizePool,
+                                        snapshot.data.time);
                                   },
                                   child: Text('Pay ' +
                                       "\u20B9" +
@@ -249,6 +260,18 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                             ],
                           ),
                         ),
+                        Divider(
+                          color: Colors.red.shade900,
+                        ),
+                        Text(
+                          'Participants',
+                          style: TextStyle(
+                              fontSize: unitHeightValue * 2.5,
+                              color: Colors.red.shade900),
+                        ),
+                        Divider(
+                          color: Colors.red.shade900,
+                        ),
                         StreamBuilder<List<Participants>>(
                             stream:
                                 DatabaseService().getParticipantList(matchId),
@@ -257,20 +280,43 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                 return Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Container(
-                                      height:
-                                          MediaQuery.of(context).size.height /
-                                              2,
                                       child: ListView.builder(
+                                          shrinkWrap: true,
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
                                           itemCount: snapshot.data.length,
                                           itemBuilder: (BuildContext context,
                                               int index) {
-                                            return Text(
-                                                snapshot.data[index].gameName);
+                                            return Container(
+                                              child: Container(
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color: Colors.black)),
+                                                child: Center(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Text(
+                                                      snapshot
+                                                          .data[index].gameName,
+                                                      style: TextStyle(
+                                                          fontSize:
+                                                              unitHeightValue *
+                                                                  2),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
                                           })),
                                 );
                               } else {
                                 return Container(
-                                  child: Text('Loading...'),
+                                  child: Text('No Participants'),
                                 );
                               }
                             }),
@@ -300,13 +346,28 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
         ' Prize pool exclusively on | Trident Gaming | download link: ');
   }
 
-  _addUserAsParticipants(matchId, game) async {
+  _addUserAsParticipants(matchId, game, name, ticket, status, imageUrl, map,
+      matchNo, maxParticipants, perKill, prizePool, time) async {
     pr.show();
     try {
       await DatabaseService().getUserData(game).then((value) async {
         await DatabaseService()
             .addMatchParticipants(matchId, value.gameName, value.name);
       });
+      await DatabaseService().addToSubscribedGames(
+        matchId,
+        game,
+        name,
+        ticket,
+        status,
+        imageUrl,
+        map,
+        matchNo,
+        maxParticipants,
+        perKill,
+        prizePool,
+        time,
+      );
       pr.hide();
     } catch (e) {
       Toast.show(e.toString(), context);
@@ -315,28 +376,3 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
     }
   }
 }
-
-// FutureBuilder<List<Participants>>(
-//                             future: DatabaseService().getPlayerList(matchId),
-//                             builder: (context, snapshot) {
-//                               if (snapshot.hasData) {
-//                                 return Padding(
-//                                   padding: const EdgeInsets.all(8.0),
-//                                   child: Container(
-//                                       height:
-//                                           MediaQuery.of(context).size.height /
-//                                               2,
-//                                       child: ListView.builder(
-//                                           itemCount: snapshot.data.length,
-//                                           itemBuilder: (BuildContext context,
-//                                               int index) {
-//                                             return Text(
-//                                                 snapshot.data[index].gameName);
-//                                           })),
-//                                 );
-//                               } else {
-//                                 return Container(
-//                                   child: Text(''),
-//                                 );
-//                               }
-//                             })
