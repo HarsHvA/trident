@@ -15,7 +15,7 @@ class DatabaseService {
       Firestore.instance.collection('customMatchRooms');
 
   final CollectionReference participantsCollection =
-      Firestore.instance.collection('participants');
+      Firestore.instance.collection('customMatchRooms');
 
   final CollectionReference userMatchHistoryCollection =
       Firestore.instance.collection('userMatchHistory');
@@ -33,11 +33,26 @@ class DatabaseService {
 
   Future addMatchParticipants(matchId, gameName, name) async {
     String userId = await AuthService().uID();
-    return await participantsCollection.document(matchId).updateData({
-      'participants': FieldValue.arrayUnion([
-        {'name': name, 'gameName': gameName, 'uid': userId, 'matchId': matchId}
-      ])
+    CollectionReference _participantsCollection = Firestore.instance
+        .collection('customMatchRooms')
+        .document(matchId)
+        .collection('participants');
+    return await _participantsCollection.add({
+      userId: {'name': name, 'gameName': gameName}
     });
+  }
+
+  Future<bool> checkIfAdmin() async {
+    bool dog = false;
+    String userId = await AuthService().uID();
+    await usersCollection.document(userId).get().then((value) {
+      dog = value.data['dog'] ?? false;
+    });
+    if (dog) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   Future addToSubscribedGames(
@@ -67,8 +82,8 @@ class DatabaseService {
       'imageUrl': imageUrl ?? '',
       'map': map ?? '',
       'matchNo': matchNo ?? '',
-      'maxParticipants': maxPariticpants ?? '',
-      'perKill': perKill ?? '',
+      'maxParticipants': maxPariticpants ?? 0,
+      'perKill': perKill ?? 0,
       'prizePool': prizePool ?? '',
       'time': time
     });
@@ -84,8 +99,8 @@ class DatabaseService {
           imageUrl: e.data['imageUrl'] ?? '',
           map: e.data['map'] ?? '',
           matchNo: e.data['matchNo'] ?? '',
-          maxParticipants: e.data['maxParticipants'] ?? '',
-          perKill: e.data['perKill'] ?? '',
+          maxParticipants: e.data['maxParticipants'] ?? 0,
+          perKill: e.data['perKill'] ?? 0,
           prizePool: e.data['prizePool'] ?? '',
           id: e.documentID,
           time: e.data['time']);
@@ -93,18 +108,34 @@ class DatabaseService {
   }
 
   Stream<List<Participants>> getParticipantList(matchId) {
-    return participantsCollection.document(matchId).snapshots().map((event) {
-      List<Participants> participantList = [];
-      List list = event.data['participants'];
-      for (var i = 0; i < list.length; i++) {
-        participantList.add(new Participants(
-            gameName: list[i]['gameName'],
-            name: list[i]['name'],
-            uid: list[i]['uid']));
-      }
-      return participantList;
+    CollectionReference _participantsCollection = Firestore.instance
+        .collection('customMatchRooms')
+        .document(matchId)
+        .collection('participants');
+
+    String _name = '';
+    String _uid = '';
+    String _gameName = '';
+
+    return _participantsCollection.snapshots().map((event) {
+      return event.documents.map((ev) {
+        print(ev.data.values.map((e) {
+          print(e['name']);
+          print(e['gameName']);
+          print(ev.data.keys);
+        }));
+        return Participants();
+      }).toList();
     });
   }
+
+  //  List<Participants> participantList = [];
+  //     List list = event.data['participants'];
+  //     for (var i = 0; i < list.length; i++) {
+  //       participantList.add(new Participants(
+  //           gameName: list[i]['gameName'],
+  //           name: list[i]['name'],
+  //           uid: list[i]['uid']));
 
   Stream<List<Matches>> get ongoingMatches {
     return matchesCollection
@@ -128,8 +159,8 @@ class DatabaseService {
             imageUrl: e.data['imageUrl'] ?? '',
             map: e.data['map'] ?? '',
             matchNo: e.data['matchNo'] ?? '',
-            maxParticipants: e.data['maxParticipants'] ?? '',
-            perKill: e.data['perKill'] ?? '',
+            maxParticipants: e.data['maxParticipants'] ?? 0,
+            perKill: e.data['perKill'] ?? 0,
             prizePool: e.data['prizePool'] ?? '',
             id: e.documentID,
             time: e.data['time']);
@@ -154,8 +185,8 @@ class DatabaseService {
           ticket: value.data['ticket'] ?? 0,
           map: value.data['map'] ?? '',
           matchNo: value.data['matchNo'] ?? '',
-          maxParticipants: value.data['maxParticipants'] ?? '',
-          perKill: value.data['perKill'] ?? '',
+          maxParticipants: value.data['maxParticipants'] ?? 0,
+          perKill: value.data['perKill'] ?? 0,
           prizePool: value.data['prizePool'] ?? '',
           time: value.data['time'],
           id: value.documentID);
@@ -173,5 +204,20 @@ class DatabaseService {
       gameName = value.data[game];
     });
     return User(name: name, email: email, gameName: gameName);
+  }
+
+  Future<User> getUserInformation() async {
+    String userId = await AuthService().uID();
+    String name;
+    String email;
+    int walletMoney;
+    usersCollection.document(userId).get().then((value) {
+      name = value.data['name'];
+      email = value.data['email'];
+      walletMoney = value.data['walletAmount'];
+    });
+    print(userId);
+    return User(
+        name: name ?? '', email: email ?? '', walletMoney: walletMoney ?? 0);
   }
 }

@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
 import 'package:trident/openingPage.dart';
+import 'package:trident/services/database_services.dart';
 import 'package:trident/top_bar.dart';
 import 'package:trident/views/account_details_page.dart';
-import 'package:trident/views/tournament_history_page.dart';
+import 'package:trident/views/main_page.dart';
+import 'package:trident/views/wallet_details_page.dart';
 import 'package:trident/widgets/provider_widget.dart';
 
 class UserPage extends StatefulWidget {
@@ -61,10 +63,14 @@ class _UserPageState extends State<UserPage> {
                   children: <Widget>[
                     _buildListItems('My Wallet', 0, context),
                     _buildListItems('Account details', 1, context),
-                    _buildListItems('Tournament History', 2, context),
-                    _buildListItems('Help', 3, context),
-                    _buildListItems('feedback', 4, context),
-                    _buildListItems('Logout', 5, context),
+                    _buildListItems('Help', 2, context),
+                    GestureDetector(
+                      child: _buildListItems('feedback', 3, context),
+                      onLongPress: () {
+                        _dogMode();
+                      },
+                    ),
+                    _buildListItems('Logout', 4, context),
                   ],
                 )),
           ],
@@ -91,10 +97,10 @@ class _UserPageState extends State<UserPage> {
         title: Text(label),
       )),
       onTap: () {
-        Toast.show(label, context);
         switch (index) {
           case 0:
-            Toast.show(label, context);
+            Navigator.of(context, rootNavigator: true)
+                .push(MaterialPageRoute(builder: (context) => WalletPage()));
             break;
 
           case 1:
@@ -103,23 +109,13 @@ class _UserPageState extends State<UserPage> {
             break;
 
           case 2:
-            Navigator.push(
-                this.context,
-                MaterialPageRoute(
-                    builder: (context) => TournamentHistoryPage()));
+            Toast.show(label, context);
             break;
-
           case 3:
             Toast.show(label, context);
             break;
           case 4:
-            Toast.show(label, context);
-            break;
-          case 5:
             _logout();
-            break;
-          default:
-            Toast.show('Oops! Something went wrong', context);
             break;
         }
       },
@@ -131,5 +127,14 @@ class _UserPageState extends State<UserPage> {
     auth.signOut();
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => OpeningPage()));
+  }
+
+  _dogMode() async {
+    bool dog = await DatabaseService().checkIfAdmin();
+    if (dog) {
+      print('dogMode');
+      Navigator.of(context, rootNavigator: true)
+          .push(MaterialPageRoute(builder: (context) => DogPage()));
+    }
   }
 }

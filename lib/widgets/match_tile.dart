@@ -108,7 +108,7 @@ class MatchTile extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: AutoSizeText(
-                                "\u20B9" + matches.perKill + "/kill",
+                                "\u20B9" + matches.perKill.toString() + "/kill",
                                 style: TextStyle(
                                     fontSize: unitHeightValue * 2.5,
                                     color: Colors.white)),

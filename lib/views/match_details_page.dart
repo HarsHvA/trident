@@ -111,7 +111,8 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                       TableCellVerticalAlignment.middle,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Text("100"),
+                                    child: Text(snapshot.data.maxParticipants
+                                        .toString()),
                                   ),
                                 )
                               ]),
@@ -184,8 +185,8 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                       TableCellVerticalAlignment.middle,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child:
-                                        Text("\u20B9 " + snapshot.data.perKill),
+                                    child: Text("\u20B9 " +
+                                        snapshot.data.perKill.toString()),
                                   ),
                                 )
                               ]),
@@ -301,8 +302,9 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                                         const EdgeInsets.all(
                                                             8.0),
                                                     child: Text(
-                                                      snapshot
-                                                          .data[index].gameName,
+                                                      snapshot.data[index]
+                                                              .gameName ??
+                                                          '',
                                                       style: TextStyle(
                                                           fontSize:
                                                               unitHeightValue *
@@ -368,6 +370,7 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
         prizePool,
         time,
       );
+      Toast.show('Match Joined', context);
       pr.hide();
     } catch (e) {
       Toast.show(e.toString(), context);

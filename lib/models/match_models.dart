@@ -8,8 +8,8 @@ class Matches {
   String imageUrl;
   String map;
   String matchNo;
-  String maxParticipants;
-  String perKill;
+  int maxParticipants;
+  int perKill;
   String prizePool;
   String id;
   Timestamp time;
