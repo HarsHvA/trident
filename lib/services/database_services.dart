@@ -15,7 +15,7 @@ class DatabaseService {
       Firestore.instance.collection('customMatchRooms');
 
   final CollectionReference participantsCollection =
-      Firestore.instance.collection('customMatchRooms');
+      Firestore.instance.collection('participants');
 
   final CollectionReference userMatchHistoryCollection =
       Firestore.instance.collection('userMatchHistory');
@@ -31,15 +31,20 @@ class DatabaseService {
     return await usersCollection.document(userId).updateData({game: id});
   }
 
-  Future addMatchParticipants(matchId, gameName, name) async {
+  Future addMatchParticipants(matchId, gameName, name, game, matchNo) async {
     String userId = await AuthService().uID();
-    CollectionReference _participantsCollection = Firestore.instance
-        .collection('customMatchRooms')
-        .document(matchId)
-        .collection('participants');
-    return await _participantsCollection.add({
-      userId: {'name': name, 'gameName': gameName}
-    });
+    return await participantsCollection.document(matchId).setData({
+      'participants': FieldValue.arrayUnion([
+        {
+          'name': name,
+          'gameName': gameName,
+          'uid': userId,
+          'matchId': matchId,
+          'game': game,
+          'matchNo': matchNo
+        }
+      ])
+    }, merge: true);
   }
 
   Future<bool> checkIfAdmin() async {
@@ -103,43 +108,35 @@ class DatabaseService {
           perKill: e.data['perKill'] ?? 0,
           prizePool: e.data['prizePool'] ?? '',
           id: e.documentID,
-          time: e.data['time']);
+          time: e.data['time'],
+          resultOut: e.data['result'] ?? false);
     }).toList();
   }
 
   Stream<List<Participants>> getParticipantList(matchId) {
-    CollectionReference _participantsCollection = Firestore.instance
-        .collection('customMatchRooms')
-        .document(matchId)
-        .collection('participants');
-
-    String _name = '';
-    String _uid = '';
-    String _gameName = '';
-
-    return _participantsCollection.snapshots().map((event) {
-      return event.documents.map((ev) {
-        print(ev.data.values.map((e) {
-          print(e['name']);
-          print(e['gameName']);
-          print(ev.data.keys);
-        }));
-        return Participants();
-      }).toList();
+    return participantsCollection.document(matchId).snapshots().map((event) {
+      List<Participants> participantList = [];
+      List list = event.data['participants'];
+      for (var i = 0; i < list.length; i++) {
+        participantList.add(new Participants(
+            gameName: list[i]['gameName'],
+            name: list[i]['name'],
+            uid: list[i]['uid']));
+      }
+      return participantList;
     });
   }
-
-  //  List<Participants> participantList = [];
-  //     List list = event.data['participants'];
-  //     for (var i = 0; i < list.length; i++) {
-  //       participantList.add(new Participants(
-  //           gameName: list[i]['gameName'],
-  //           name: list[i]['name'],
-  //           uid: list[i]['uid']));
 
   Stream<List<Matches>> get ongoingMatches {
     return matchesCollection
         .where('status', isEqualTo: 'Live')
+        .snapshots()
+        .map(_matchListFromSnapShot);
+  }
+
+  Stream<List<Matches>> get allMatches {
+    return matchesCollection
+        .orderBy('time', descending: true)
         .snapshots()
         .map(_matchListFromSnapShot);
   }
@@ -176,6 +173,24 @@ class DatabaseService {
   }
 
   Stream<Matches> getMatchDetails(id) {
+    return matchesCollection.document(id).snapshots().map((value) {
+      return Matches(
+          game: value.data['game'] ?? '',
+          name: value.data['name'] ?? '',
+          status: value.data['status'] ?? '',
+          imageUrl: value.data['imageUrl'] ?? '',
+          ticket: value.data['ticket'] ?? 0,
+          map: value.data['map'] ?? '',
+          matchNo: value.data['matchNo'] ?? '',
+          maxParticipants: value.data['maxParticipants'] ?? 0,
+          perKill: value.data['perKill'] ?? 0,
+          prizePool: value.data['prizePool'] ?? '',
+          time: value.data['time'],
+          id: value.documentID);
+    });
+  }
+
+  Stream<Matches> getCompletedMatchDetails(id) {
     return matchesCollection.document(id).snapshots().map((value) {
       return Matches(
           game: value.data['game'] ?? '',

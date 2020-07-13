@@ -353,8 +353,8 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
     pr.show();
     try {
       await DatabaseService().getUserData(game).then((value) async {
-        await DatabaseService()
-            .addMatchParticipants(matchId, value.gameName, value.name);
+        await DatabaseService().addMatchParticipants(
+            matchId, value.gameName, value.name, game, matchNo);
       });
       await DatabaseService().addToSubscribedGames(
         matchId,

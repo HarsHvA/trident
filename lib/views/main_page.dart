@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trident/views/all_matches.dart';
 import 'package:trident/views/create_match.dart';
 
 class DogPage extends StatefulWidget {
@@ -104,7 +105,7 @@ class _DogPageState extends State<DogPage> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        "Post Results",
+                        "Manage matches",
                         style: TextStyle(
                             fontSize: unitHeightValue * 2, color: Colors.white),
                       ),
@@ -113,7 +114,10 @@ class _DogPageState extends State<DogPage> {
                 ),
                 color: Colors.red.shade800,
               ),
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context, rootNavigator: true).push(
+                    MaterialPageRoute(builder: (context) => AllMatches()));
+              },
             ),
           ],
         ),

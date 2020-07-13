@@ -13,6 +13,7 @@ class Matches {
   String prizePool;
   String id;
   Timestamp time;
+  bool resultOut;
 
   Matches(
       {this.game,
@@ -26,5 +27,6 @@ class Matches {
       this.perKill,
       this.prizePool,
       this.id,
-      this.time});
+      this.time,
+      this.resultOut});
 }
