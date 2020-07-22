@@ -281,7 +281,23 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                 return Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Container(
-                                      child: ListView.builder(
+                                      child: Column(
+                                    children: <Widget>[
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Colors.black)),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Text('Sl.no'),
+                                            Text('Name'),
+                                            Text('Game-Id')
+                                          ],
+                                        ),
+                                      ),
+                                      ListView.builder(
                                           shrinkWrap: true,
                                           physics:
                                               const NeverScrollableScrollPhysics(),
@@ -289,32 +305,26 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                           itemBuilder: (BuildContext context,
                                               int index) {
                                             return Container(
-                                              child: Container(
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        color: Colors.black)),
-                                                child: Center(
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Text(
-                                                      snapshot.data[index]
-                                                              .gameName ??
-                                                          '',
-                                                      style: TextStyle(
-                                                          fontSize:
-                                                              unitHeightValue *
-                                                                  2),
-                                                    ),
-                                                  ),
-                                                ),
+                                                child: Container(
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: Colors.black)),
+                                              child: Row(
+                                                children: <Widget>[
+                                                  Text(index.toString()),
+                                                  Text(snapshot
+                                                      .data[index].name),
+                                                  Text(snapshot
+                                                      .data[index].gameName),
+                                                ],
                                               ),
-                                            );
-                                          })),
+                                            ));
+                                          }),
+                                    ],
+                                  )),
                                 );
                               } else {
                                 return Container(
