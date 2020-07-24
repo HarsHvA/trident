@@ -20,6 +20,9 @@ class DatabaseService {
   final CollectionReference userMatchHistoryCollection =
       Firestore.instance.collection('userMatchHistory');
 
+  final CollectionReference resultsCollection =
+      Firestore.instance.collection('results');
+
   Future updateUserData(String name, String email, String wallet) async {
     return await usersCollection
         .document(uid)
@@ -138,6 +141,21 @@ class DatabaseService {
     }).toList();
   }
 
+  Stream<List<Results>> result(matchId) {
+    // print(matchId);
+    return resultsCollection.document(matchId).snapshots().map((event) {
+      List<Results> result = [];
+      List list = event.data['results'];
+      for (var i = 0; i < list.length; i++) {
+        result.add(new Results(
+            gameId: list[i]['playerId'],
+            kills: list[i]['kills'],
+            reward: list[i]['moneyWon']));
+      }
+      return result;
+    });
+  }
+
   Stream<List<Participants>> getParticipantList(matchId) {
     return participantsCollection.document(matchId).snapshots().map((event) {
       List<Participants> participantList = [];
@@ -215,23 +233,23 @@ class DatabaseService {
     });
   }
 
-  Stream<Matches> getCompletedMatchDetails(id) {
-    return matchesCollection.document(id).snapshots().map((value) {
-      return Matches(
-          game: value.data['game'] ?? '',
-          name: value.data['name'] ?? '',
-          status: value.data['status'] ?? '',
-          imageUrl: value.data['imageUrl'] ?? '',
-          ticket: value.data['ticket'] ?? 0,
-          map: value.data['map'] ?? '',
-          matchNo: value.data['matchNo'] ?? '',
-          maxParticipants: value.data['maxParticipants'] ?? 0,
-          perKill: value.data['perKill'] ?? 0,
-          prizePool: value.data['prizePool'] ?? '',
-          time: value.data['time'],
-          id: value.documentID);
-    });
-  }
+  // Stream<Matches> getCompletedMatchDetails(id) {
+  //   return matchesCollection.document(id).snapshots().map((value) {
+  //     return Matches(
+  //         game: value.data['game'] ?? '',
+  //         name: value.data['name'] ?? '',
+  //         status: value.data['status'] ?? '',
+  //         imageUrl: value.data['imageUrl'] ?? '',
+  //         ticket: value.data['ticket'] ?? 0,
+  //         map: value.data['map'] ?? '',
+  //         matchNo: value.data['matchNo'] ?? '',
+  //         maxParticipants: value.data['maxParticipants'] ?? 0,
+  //         perKill: value.data['perKill'] ?? 0,
+  //         prizePool: value.data['prizePool'] ?? '',
+  //         time: value.data['time'],
+  //         id: value.documentID);
+  //   });
+  // }
 
   Future<User> getUserData(game) async {
     String userId = await AuthService().uID();

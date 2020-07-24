@@ -6,6 +6,7 @@ import 'package:toast/toast.dart';
 import 'package:trident/models/match_models.dart';
 import 'package:trident/models/participant_models.dart';
 import 'package:trident/services/database_services.dart';
+import 'package:trident/views/result_page.dart';
 
 class MatchesDetailsPage extends StatefulWidget {
   final String matchId;
@@ -254,7 +255,10 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                             snapshot.data.time);
                                       }
                                     } else {
-                                      Toast.show('Fixtures', context);
+                                      Navigator.of(context, rootNavigator: true)
+                                          .push(MaterialPageRoute(
+                                              builder: (context) => ResultPage(
+                                                  matchId: matchId)));
                                     }
                                   },
                                   child: Text(_getButtonText(

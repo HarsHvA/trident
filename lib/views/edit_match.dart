@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:toast/toast.dart';
 import 'package:trident/models/match_models.dart';
+import 'package:trident/services/auth_service.dart';
 import 'package:trident/services/database_services.dart';
 
 class EditMatch extends StatefulWidget {
@@ -443,10 +444,26 @@ class _EditMatchState extends State<EditMatch> {
   _updateMatchData(id) async {
     pr.show();
     try {
+      String userId = await AuthService().uID();
       CollectionReference matchCollection =
           Firestore.instance.collection('customMatchRooms');
+      CollectionReference subscribedGames = Firestore.instance
+          .collection('users')
+          .document(userId)
+          .collection('subscribedGames');
 
       await matchCollection.document(id).updateData({
+        'name': _name,
+        'matchNo': _matchNo,
+        'maxParticipants': _maxParticipants,
+        'perKill': _perKill,
+        'prizePool': _prizePool,
+        'status': _status,
+        'ticket': _ticket,
+        'time': _dateTime
+      });
+
+      await subscribedGames.document(id).updateData({
         'name': _name,
         'matchNo': _matchNo,
         'maxParticipants': _maxParticipants,

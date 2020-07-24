@@ -30,3 +30,11 @@ class Matches {
       this.time,
       this.resultOut});
 }
+
+class Results {
+  String gameId;
+  String kills;
+  String reward;
+
+  Results({this.gameId, this.kills, this.reward});
+}
