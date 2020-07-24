@@ -41,10 +41,8 @@ class MatchTile extends StatelessWidget {
                       ColorFiltered(
                         colorFilter: ColorFilter.mode(
                             Colors.black.withOpacity(0.5), BlendMode.srcOver),
-                        child: Image.network(
+                        child: Image.asset(
                           matches.imageUrl,
-                          // 'https://resize.indiatvnews.com/en/resize/newbucket/1200_-/2020/02/pubg-1580537222.jpg',
-                          //'https://cdn.vox-cdn.com/thumbor/eGwtGUFjQR-OqWIYuBZkEA0LXIs=/0x0:2560x1440/1200x675/filters:focal(1076x516:1484x924)/cdn.vox-cdn.com/uploads/chorus_image/image/66532267/kv.0.jpg',
                           fit: BoxFit.fill,
                         ),
                       ),
@@ -159,7 +157,7 @@ class MatchTile extends StatelessWidget {
                                 child: SizedBox(
                                   height: unitHeightValue * 2.5,
                                   child:
-                                      ImageIcon(AssetImage("assets/cup.png")),
+                                      Center(child: AutoSizeText('Prize pool')),
                                 ),
                               ))),
                           TableCell(

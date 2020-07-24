@@ -102,16 +102,8 @@ class _CreateMatchState extends State<CreateMatch> {
                         });
                       },
                       dataSource: [
-                        {
-                          'display': 'PUBG',
-                          'value':
-                              'https://resize.indiatvnews.com/en/resize/newbucket/1200_-/2020/02/pubg-1580537222.jpg'
-                        },
-                        {
-                          'display': 'Freefire',
-                          'value':
-                              'https://venturebeat.com/wp-content/uploads/2020/05/Garena-Free-Fire.jpg?w=1200&strip=all'
-                        }
+                        {'display': 'PUBG', 'value': 'assets/pubg.jpg'},
+                        {'display': 'Freefire', 'value': 'assets/freefire.jpg'}
                       ],
                       textField: 'display',
                       valueField: 'value',

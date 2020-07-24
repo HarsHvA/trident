@@ -20,7 +20,6 @@ class _MyMatchesTabState extends State<MyMatchesTab> {
               stream: DatabaseService().myMatches(snap.data),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  print(snap.data);
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ListView.builder(

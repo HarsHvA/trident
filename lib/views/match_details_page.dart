@@ -48,7 +48,7 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
             return Center(
               child: Text('Loading...'),
             );
-          else
+          else {
             return SafeArea(
               child: Scaffold(
                   appBar: PreferredSize(
@@ -222,24 +222,44 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                 child: RaisedButton(
                                   color: Colors.green,
                                   colorBrightness: Brightness.light,
-                                  onPressed: () {
-                                    _addUserAsParticipants(
-                                        matchId,
-                                        snapshot.data.game,
-                                        snapshot.data.name,
-                                        snapshot.data.ticket,
-                                        snapshot.data.status,
-                                        snapshot.data.imageUrl,
-                                        snapshot.data.map,
-                                        snapshot.data.matchNo,
-                                        snapshot.data.maxParticipants,
-                                        snapshot.data.perKill,
-                                        snapshot.data.prizePool,
-                                        snapshot.data.time);
+                                  onPressed: () async {
+                                    if (snapshot.data.status.toLowerCase() ==
+                                        'upcoming') {
+                                      pr.show();
+                                      bool joined = false;
+                                      try {
+                                        joined = await DatabaseService()
+                                            .checkMatchJoined(matchId);
+                                      } catch (e) {
+                                        print(e);
+                                      }
+                                      if (joined) {
+                                        pr.hide();
+                                        Toast.show(
+                                            'You have already joined the match',
+                                            context);
+                                      } else {
+                                        _addUserAsParticipants(
+                                            matchId,
+                                            snapshot.data.game,
+                                            snapshot.data.name,
+                                            snapshot.data.ticket,
+                                            snapshot.data.status,
+                                            snapshot.data.imageUrl,
+                                            snapshot.data.map,
+                                            snapshot.data.matchNo,
+                                            snapshot.data.maxParticipants,
+                                            snapshot.data.perKill,
+                                            snapshot.data.prizePool,
+                                            snapshot.data.time);
+                                      }
+                                    } else {
+                                      Toast.show('Fixtures', context);
+                                    }
                                   },
-                                  child: Text('Pay ' +
-                                      "\u20B9" +
-                                      snapshot.data.ticket.toString()),
+                                  child: Text(_getButtonText(
+                                      snapshot.data.status,
+                                      snapshot.data.ticket)),
                                   textColor: Colors.white,
                                 ),
                               ),
@@ -258,6 +278,43 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                   textColor: Colors.white,
                                 ),
                               ),
+                              FutureBuilder<bool>(
+                                  future: DatabaseService()
+                                      .checkMatchJoined(matchId),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<bool> snapshot) {
+                                    switch (snapshot.connectionState) {
+                                      case ConnectionState.waiting:
+                                        return Container();
+
+                                      default:
+                                        if (snapshot.hasError) {
+                                          return Container();
+                                        } else {
+                                          if (snapshot.data) {
+                                            return Container(
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              child: RaisedButton(
+                                                color: Colors.black,
+                                                colorBrightness:
+                                                    Brightness.light,
+                                                onPressed: () {
+                                                  Toast.show(
+                                                      'A dialog with room code will open',
+                                                      context);
+                                                },
+                                                child: Text('Room details'),
+                                                textColor: Colors.white,
+                                              ),
+                                            );
+                                          } else {
+                                            return Container();
+                                          }
+                                        }
+                                    }
+                                  }),
                             ],
                           ),
                         ),
@@ -278,53 +335,21 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                 DatabaseService().getParticipantList(matchId),
                             builder: (context, snapshot) {
                               if (snapshot.hasData) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                      child: Column(
-                                    children: <Widget>[
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: Colors.black)),
-                                        child: Row(
-                                          children: <Widget>[
-                                            Text('Sl.no'),
-                                            Text('Name'),
-                                            Text('Game-Id')
-                                          ],
-                                        ),
-                                      ),
-                                      ListView.builder(
-                                          shrinkWrap: true,
-                                          physics:
-                                              const NeverScrollableScrollPhysics(),
-                                          itemCount: snapshot.data.length,
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            return Container(
-                                                child: Container(
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      color: Colors.black)),
-                                              child: Row(
-                                                children: <Widget>[
-                                                  Text(index.toString()),
-                                                  Text(snapshot
-                                                      .data[index].name),
-                                                  Text(snapshot
-                                                      .data[index].gameName),
-                                                ],
-                                              ),
-                                            ));
-                                          }),
-                                    ],
-                                  )),
+                                return SingleChildScrollView(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  child: DataTable(
+                                      columns: [
+                                        DataColumn(
+                                            label: Text(
+                                          'Game-Id',
+                                          style: TextStyle(color: Colors.red),
+                                        ))
+                                      ],
+                                      rows: snapshot.data
+                                          .map((e) => DataRow(cells: <DataCell>[
+                                                DataCell(Text(e.gameName)),
+                                              ]))
+                                          .toList()),
                                 );
                               } else {
                                 return Container(
@@ -336,12 +361,11 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                     ),
                   )),
             );
+          }
         });
   }
 
-  _payment(ticket) {
-    Toast.show(ticket.toString(), context);
-  }
+  _payment(ticket) async {}
 
   _gameTime(time) {
     return DateFormat.yMMMd().add_jm().format(time);
@@ -360,7 +384,6 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
 
   _addUserAsParticipants(matchId, game, name, ticket, status, imageUrl, map,
       matchNo, maxParticipants, perKill, prizePool, time) async {
-    pr.show();
     try {
       await DatabaseService().getUserData(game).then((value) async {
         await DatabaseService().addMatchParticipants(
@@ -380,12 +403,21 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
         prizePool,
         time,
       );
+      await DatabaseService().generateUserMatchToken(matchId);
       Toast.show('Match Joined', context);
       pr.hide();
     } catch (e) {
       Toast.show(e.toString(), context);
       print(e.toString());
       pr.hide();
+    }
+  }
+
+  _getButtonText(String status, int ticket) {
+    if (status.toLowerCase() == 'upcoming') {
+      return 'Pay ' + "\u20B9" + ticket.toString();
+    } else {
+      return 'Go to Fixtures';
     }
   }
 }

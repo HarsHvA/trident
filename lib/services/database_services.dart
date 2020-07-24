@@ -60,6 +60,31 @@ class DatabaseService {
     }
   }
 
+  Future<bool> checkMatchJoined(matchId) async {
+    bool joined = false;
+    String userId = await AuthService().uID();
+    CollectionReference userMatchTokens =
+        Firestore.instance.collection('userMatchTokens');
+
+    await userMatchTokens.document(matchId).get().then((value) {
+      joined = value.data[userId] ?? false;
+    });
+
+    if (joined) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future generateUserMatchToken(matchId) async {
+    String userId = await AuthService().uID();
+    CollectionReference userMatchTokens =
+        Firestore.instance.collection('userMatchTokens');
+
+    await userMatchTokens.document(matchId).setData({userId: true});
+  }
+
   Future addToSubscribedGames(
     matchId,
     game,
@@ -231,7 +256,6 @@ class DatabaseService {
       email = value.data['email'];
       walletMoney = value.data['walletAmount'];
     });
-    print(userId);
     return User(
         name: name ?? '', email: email ?? '', walletMoney: walletMoney ?? 0);
   }
