@@ -14,7 +14,15 @@ class CreateMatch extends StatefulWidget {
 
 class _CreateMatchState extends State<CreateMatch> {
   final formKey = new GlobalKey<FormState>();
-  String _status, _prizePool, _map, _game, _imgUrl, _name, _matchNo = '';
+  String _status,
+      _prizePool,
+      _map,
+      _game,
+      _imgUrl,
+      _name,
+      _matchNo,
+      _roomId,
+      _roomPassword = '';
   int _perKill, _ticket, _maxParticipants;
   final format = DateFormat("yyyy-MM-dd HH:mm");
   DateTime _dateTime;
@@ -411,6 +419,78 @@ class _CreateMatchState extends State<CreateMatch> {
                                           _dateTime = value;
                                         },
                                       ),
+                                      SizedBox(
+                                        height: 30,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                            'Room Id',
+                                            style: TextStyle(
+                                                fontSize: unitHeightValue * 2,
+                                                fontWeight: FontWeight.w400,
+                                                color: Colors.black87),
+                                          ),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          TextFormField(
+                                            onSaved: (value) {
+                                              _roomId = value ?? '';
+                                            },
+                                            decoration: InputDecoration(
+                                              contentPadding:
+                                                  EdgeInsets.symmetric(
+                                                      vertical: 0,
+                                                      horizontal: 10),
+                                              enabledBorder: OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.grey[400])),
+                                              border: OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.grey[400])),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 30,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                            'Room password',
+                                            style: TextStyle(
+                                                fontSize: unitHeightValue * 2,
+                                                fontWeight: FontWeight.w400,
+                                                color: Colors.black87),
+                                          ),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          TextFormField(
+                                            onSaved: (value) {
+                                              _roomPassword = value ?? '';
+                                            },
+                                            decoration: InputDecoration(
+                                              contentPadding:
+                                                  EdgeInsets.symmetric(
+                                                      vertical: 0,
+                                                      horizontal: 10),
+                                              enabledBorder: OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.grey[400])),
+                                              border: OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.grey[400])),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ]),
                                 Container(
                                   width: MediaQuery.of(context).size.width,
@@ -456,7 +536,9 @@ class _CreateMatchState extends State<CreateMatch> {
         'prizePool': _prizePool,
         'status': _status,
         'ticket': _ticket,
-        'time': _dateTime
+        'time': _dateTime,
+        'roomId': _roomId,
+        'roomPassword': _roomPassword
       });
       pr.hide();
       Toast.show('Match created', context);

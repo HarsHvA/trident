@@ -89,19 +89,20 @@ class DatabaseService {
   }
 
   Future addToSubscribedGames(
-    matchId,
-    game,
-    name,
-    ticket,
-    status,
-    imageUrl,
-    map,
-    matchNo,
-    maxPariticpants,
-    perKill,
-    prizePool,
-    time,
-  ) async {
+      matchId,
+      game,
+      name,
+      ticket,
+      status,
+      imageUrl,
+      map,
+      matchNo,
+      maxPariticpants,
+      perKill,
+      prizePool,
+      time,
+      roomId,
+      roomPassword) async {
     String userId = await AuthService().uID();
     return await usersCollection
         .document(userId)
@@ -118,7 +119,9 @@ class DatabaseService {
       'maxParticipants': maxPariticpants ?? 0,
       'perKill': perKill ?? 0,
       'prizePool': prizePool ?? '',
-      'time': time
+      'time': time,
+      'roomId': roomId ?? '',
+      'roomPassword': roomPassword ?? ''
     });
   }
 
@@ -137,7 +140,9 @@ class DatabaseService {
           prizePool: e.data['prizePool'] ?? '',
           id: e.documentID,
           time: e.data['time'],
-          resultOut: e.data['result'] ?? false);
+          resultOut: e.data['result'] ?? false,
+          roomId: e.data['roomId'] ?? '',
+          roomPassword: e.data['roomPassword'] ?? '');
     }).toList();
   }
 
@@ -203,7 +208,9 @@ class DatabaseService {
             perKill: e.data['perKill'] ?? 0,
             prizePool: e.data['prizePool'] ?? '',
             id: e.documentID,
-            time: e.data['time']);
+            time: e.data['time'],
+            roomId: e.data['roomId'] ?? '',
+            roomPassword: e.data['roomPassword'] ?? '');
       }).toList();
     });
   }
@@ -229,7 +236,9 @@ class DatabaseService {
           perKill: value.data['perKill'] ?? 0,
           prizePool: value.data['prizePool'] ?? '',
           time: value.data['time'],
-          id: value.documentID);
+          id: value.documentID,
+          roomId: value.data['roomId'],
+          roomPassword: value.data['roomPassword']);
     });
   }
 

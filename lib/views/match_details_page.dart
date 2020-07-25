@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:share/share.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -252,7 +253,9 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                             snapshot.data.maxParticipants,
                                             snapshot.data.perKill,
                                             snapshot.data.prizePool,
-                                            snapshot.data.time);
+                                            snapshot.data.time,
+                                            snapshot.data.roomId,
+                                            snapshot.data.roomPassword);
                                       }
                                     } else {
                                       Navigator.of(context, rootNavigator: true)
@@ -286,16 +289,16 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                   future: DatabaseService()
                                       .checkMatchJoined(matchId),
                                   builder: (BuildContext context,
-                                      AsyncSnapshot<bool> snapshot) {
-                                    switch (snapshot.connectionState) {
+                                      AsyncSnapshot<bool> snap) {
+                                    switch (snap.connectionState) {
                                       case ConnectionState.waiting:
                                         return Container();
 
                                       default:
-                                        if (snapshot.hasError) {
+                                        if (snap.hasError) {
                                           return Container();
                                         } else {
-                                          if (snapshot.data) {
+                                          if (snap.data) {
                                             return Container(
                                               width: MediaQuery.of(context)
                                                   .size
@@ -305,9 +308,12 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                                 colorBrightness:
                                                     Brightness.light,
                                                 onPressed: () {
-                                                  Toast.show(
-                                                      'A dialog with room code will open',
-                                                      context);
+                                                  _showRoomdetailDialog(
+                                                      snapshot.data.roomId ??
+                                                          'NA',
+                                                      snapshot.data
+                                                              .roomPassword ??
+                                                          'NA');
                                                 },
                                                 child: Text('Room details'),
                                                 textColor: Colors.white,
@@ -375,6 +381,67 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
     return DateFormat.yMMMd().add_jm().format(time);
   }
 
+  void _showRoomdetailDialog(roomId, roomPassword) {
+    showModalBottomSheet(
+      enableDrag: false,
+      context: context,
+      builder: (context) {
+        return Wrap(
+          children: <Widget>[
+            Container(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.all(8),
+                          child: Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Icon(
+                                  Icons.info_outline,
+                                  color: Colors.red.shade900,
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  'Id and password are made available 10 minutes before the match',
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          child: Column(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: SelectableText('RoomId : ' + roomId),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: SelectableText(
+                                    'Password : ' + roomPassword),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   _shareMatchDetails(game, time, prize) {
     // TODO: Add your game installation link here
     Share.share(game +
@@ -386,27 +453,41 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
         ' Prize pool exclusively on | Trident Gaming | download link: ');
   }
 
-  _addUserAsParticipants(matchId, game, name, ticket, status, imageUrl, map,
-      matchNo, maxParticipants, perKill, prizePool, time) async {
+  _addUserAsParticipants(
+      matchId,
+      game,
+      name,
+      ticket,
+      status,
+      imageUrl,
+      map,
+      matchNo,
+      maxParticipants,
+      perKill,
+      prizePool,
+      time,
+      roomId,
+      roomPassword) async {
     try {
       await DatabaseService().getUserData(game).then((value) async {
         await DatabaseService().addMatchParticipants(
             matchId, value.gameName, value.name, game, matchNo);
       });
       await DatabaseService().addToSubscribedGames(
-        matchId,
-        game,
-        name,
-        ticket,
-        status,
-        imageUrl,
-        map,
-        matchNo,
-        maxParticipants,
-        perKill,
-        prizePool,
-        time,
-      );
+          matchId,
+          game,
+          name,
+          ticket,
+          status,
+          imageUrl,
+          map,
+          matchNo,
+          maxParticipants,
+          perKill,
+          prizePool,
+          time,
+          roomId,
+          roomPassword);
       await DatabaseService().generateUserMatchToken(matchId);
       Toast.show('Match Joined', context);
       pr.hide();

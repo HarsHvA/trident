@@ -14,6 +14,8 @@ class Matches {
   String id;
   Timestamp time;
   bool resultOut;
+  String roomId;
+  String roomPassword;
 
   Matches(
       {this.game,
@@ -28,7 +30,9 @@ class Matches {
       this.prizePool,
       this.id,
       this.time,
-      this.resultOut});
+      this.resultOut,
+      this.roomId,
+      this.roomPassword});
 }
 
 class Results {

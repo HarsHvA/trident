@@ -55,7 +55,7 @@ class _ResultPageState extends State<ResultPage> {
                       ),
                     ),
                     AutoSizeText(
-                      'All the rewards will be added to your wallet within 24 hours',
+                      'Rewards are added to wallet within 24 hours',
                     ),
                   ],
                 ),
