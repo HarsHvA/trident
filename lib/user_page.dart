@@ -2,10 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
 import 'package:trident/openingPage.dart';
-import 'package:trident/services/database_services.dart';
 import 'package:trident/top_bar.dart';
 import 'package:trident/views/account_details_page.dart';
-import 'package:trident/views/main_page.dart';
+import 'package:trident/views/buy_coin.dart';
 import 'package:trident/views/wallet_details_page.dart';
 import 'package:trident/widgets/provider_widget.dart';
 
@@ -64,12 +63,7 @@ class _UserPageState extends State<UserPage> {
                     _buildListItems('My Wallet', 0, context),
                     _buildListItems('Account details', 1, context),
                     _buildListItems('Help', 2, context),
-                    GestureDetector(
-                      child: _buildListItems('feedback', 3, context),
-                      onLongPress: () {
-                        _dogMode();
-                      },
-                    ),
+                    _buildListItems('feedback', 3, context),
                     _buildListItems('Logout', 4, context),
                   ],
                 )),
@@ -100,7 +94,7 @@ class _UserPageState extends State<UserPage> {
         switch (index) {
           case 0:
             Navigator.of(context, rootNavigator: true)
-                .push(MaterialPageRoute(builder: (context) => WalletPage()));
+                .push(MaterialPageRoute(builder: (context) => BuyCoinPage()));
             break;
 
           case 1:
@@ -127,14 +121,5 @@ class _UserPageState extends State<UserPage> {
     auth.signOut();
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => OpeningPage()));
-  }
-
-  _dogMode() async {
-    bool dog = await DatabaseService().checkIfAdmin();
-    if (dog) {
-      print('dogMode');
-      Navigator.of(context, rootNavigator: true)
-          .push(MaterialPageRoute(builder: (context) => DogPage()));
-    }
   }
 }

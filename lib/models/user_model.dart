@@ -4,6 +4,13 @@ class User {
   int walletMoney;
   String gameName;
   bool dog;
+  int gems;
 
-  User({this.name, this.email, this.walletMoney, this.gameName, this.dog});
+  User(
+      {this.name,
+      this.email,
+      this.walletMoney,
+      this.gameName,
+      this.dog,
+      this.gems});
 }

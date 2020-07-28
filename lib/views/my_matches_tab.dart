@@ -31,7 +31,7 @@ class _MyMatchesTabState extends State<MyMatchesTab> {
                         }),
                   );
                 } else {
-                  return Center(child: Text('No matches to show'));
+                  return Center(child: Text('matches to show'));
                 }
               });
         } else {

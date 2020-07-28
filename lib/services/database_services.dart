@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:toast/toast.dart';
 import 'package:trident/models/match_models.dart';
 import 'package:trident/models/participant_models.dart';
 import 'package:trident/models/user_model.dart';
@@ -23,10 +24,9 @@ class DatabaseService {
   final CollectionReference resultsCollection =
       Firestore.instance.collection('results');
 
-  Future updateUserData(String name, String email, String wallet) async {
-    return await usersCollection
-        .document(uid)
-        .setData({'name': name, 'email': email, 'walletAmount': wallet});
+  Future updateUserData(String name, String email, int wallet, int gems) async {
+    return await usersCollection.document(uid).setData(
+        {'name': name, 'email': email, 'walletAmount': wallet, 'gems': 0});
   }
 
   Future updateUserGameName(game, id) async {
@@ -61,6 +61,18 @@ class DatabaseService {
     } else {
       return false;
     }
+  }
+
+  Future addCoinsToWallet(newGems, context) async {
+    String userId = await AuthService().uID();
+    int gems = await usersCollection.document(userId).get().then((value) {
+      return value.data['gems'] ?? 0;
+    });
+    newGems += gems;
+    await Firestore.instance.runTransaction((transaction) async {
+      return await transaction
+          .update(usersCollection.document(userId), {'gems': newGems});
+    });
   }
 
   Future<bool> checkMatchJoined(matchId) async {
@@ -242,24 +254,6 @@ class DatabaseService {
     });
   }
 
-  // Stream<Matches> getCompletedMatchDetails(id) {
-  //   return matchesCollection.document(id).snapshots().map((value) {
-  //     return Matches(
-  //         game: value.data['game'] ?? '',
-  //         name: value.data['name'] ?? '',
-  //         status: value.data['status'] ?? '',
-  //         imageUrl: value.data['imageUrl'] ?? '',
-  //         ticket: value.data['ticket'] ?? 0,
-  //         map: value.data['map'] ?? '',
-  //         matchNo: value.data['matchNo'] ?? '',
-  //         maxParticipants: value.data['maxParticipants'] ?? 0,
-  //         perKill: value.data['perKill'] ?? 0,
-  //         prizePool: value.data['prizePool'] ?? '',
-  //         time: value.data['time'],
-  //         id: value.documentID);
-  //   });
-  // }
-
   Future<User> getUserData(game) async {
     String userId = await AuthService().uID();
     String name;
@@ -278,12 +272,17 @@ class DatabaseService {
     String name;
     String email;
     int walletMoney;
+    int gems;
     usersCollection.document(userId).get().then((value) {
       name = value.data['name'];
       email = value.data['email'];
       walletMoney = value.data['walletAmount'];
+      gems = value.data['gems'];
     });
     return User(
-        name: name ?? '', email: email ?? '', walletMoney: walletMoney ?? 0);
+        name: name ?? '',
+        email: email ?? '',
+        walletMoney: walletMoney ?? 0,
+        gems: gems ?? 0);
   }
 }

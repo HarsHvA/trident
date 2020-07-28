@@ -17,7 +17,8 @@ class AuthService {
     userUpdateName.displayName = name;
     await currentUser.user.updateProfile(userUpdateName);
     await currentUser.user.reload();
-    DatabaseService(uid: currentUser.user.uid).updateUserData(name, email, '0');
+    DatabaseService(uid: currentUser.user.uid)
+        .updateUserData(name, email, 0, 0);
     return currentUser.user.uid;
   }
 

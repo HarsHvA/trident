@@ -1,4 +1,4 @@
-import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:share/share.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -6,7 +6,9 @@ import 'package:progress_dialog/progress_dialog.dart';
 import 'package:toast/toast.dart';
 import 'package:trident/models/match_models.dart';
 import 'package:trident/models/participant_models.dart';
+import 'package:trident/services/auth_service.dart';
 import 'package:trident/services/database_services.dart';
+import 'package:trident/views/buy_coin.dart';
 import 'package:trident/views/result_page.dart';
 
 class MatchesDetailsPage extends StatefulWidget {
@@ -198,7 +200,7 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                       TableCellVerticalAlignment.middle,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Text("Entry Fees"),
+                                    child: Text("Entry gems"),
                                   ),
                                 ),
                                 TableCell(
@@ -206,8 +208,16 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                       TableCellVerticalAlignment.middle,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Text("\u20B9 " +
-                                        snapshot.data.ticket.toString()),
+                                    child: Row(
+                                      children: [
+                                        Text(snapshot.data.ticket.toString()),
+                                        Container(
+                                            width: unitWidthValue * 3,
+                                            height: unitHeightValue * 3,
+                                            child:
+                                                Image.asset('assets/gems.png')),
+                                      ],
+                                    ),
                                   ),
                                 )
                               ]),
@@ -241,7 +251,8 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                             'You have already joined the match',
                                             context);
                                       } else {
-                                        _addUserAsParticipants(
+                                        _getGemsToPlay(
+                                            snapshot.data.ticket,
                                             matchId,
                                             snapshot.data.game,
                                             snapshot.data.name,
@@ -264,9 +275,23 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                                   matchId: matchId)));
                                     }
                                   },
-                                  child: Text(_getButtonText(
-                                      snapshot.data.status,
-                                      snapshot.data.ticket)),
+                                  child: (snapshot.data.status.toLowerCase() ==
+                                          'upcoming')
+                                      ? Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text('Pay '),
+                                            Text(snapshot.data.ticket
+                                                .toString()),
+                                            Container(
+                                                width: unitWidthValue * 3,
+                                                height: unitHeightValue * 3,
+                                                child: Image.asset(
+                                                    'assets/gems.png')),
+                                          ],
+                                        )
+                                      : Text('Fixtures'),
                                   textColor: Colors.white,
                                 ),
                               ),
@@ -468,6 +493,7 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
       time,
       roomId,
       roomPassword) async {
+    pr.show();
     try {
       await DatabaseService().getUserData(game).then((value) async {
         await DatabaseService().addMatchParticipants(
@@ -498,11 +524,57 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
     }
   }
 
-  _getButtonText(String status, int ticket) {
-    if (status.toLowerCase() == 'upcoming') {
-      return 'Pay ' + "\u20B9" + ticket.toString();
+  _getButtonText(String status, int ticket) {}
+
+  Future _getGemsToPlay(
+      gemsRequired,
+      matchId,
+      game,
+      name,
+      ticket,
+      status,
+      imageUrl,
+      map,
+      matchNo,
+      maxParticipants,
+      perKill,
+      prizePool,
+      time,
+      roomId,
+      roomPassword) async {
+    String userId = await AuthService().uID();
+    CollectionReference usersCollection =
+        Firestore.instance.collection('users');
+    int gems = await usersCollection.document(userId).get().then((value) {
+      return value.data['gems'] ?? 0;
+    });
+    if (gems < gemsRequired) {
+      pr.hide();
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => BuyCoinPage()));
+      Toast.show('You dont have enough gems !', context);
     } else {
-      return 'Go to Fixtures';
+      pr.hide();
+      gems -= gemsRequired;
+      await Firestore.instance.runTransaction((transaction) async {
+        return await transaction
+            .update(usersCollection.document(userId), {'gems': gems});
+      });
+      _addUserAsParticipants(
+          matchId,
+          game,
+          name,
+          ticket,
+          status,
+          imageUrl,
+          map,
+          matchNo,
+          maxParticipants,
+          perKill,
+          prizePool,
+          time,
+          roomId,
+          roomPassword);
     }
   }
 }
