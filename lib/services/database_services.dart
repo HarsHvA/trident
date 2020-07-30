@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:toast/toast.dart';
 import 'package:trident/models/match_models.dart';
 import 'package:trident/models/participant_models.dart';
+import 'package:trident/models/transaction_models.dart';
 import 'package:trident/models/user_model.dart';
 import 'package:trident/services/auth_service.dart';
 
@@ -23,6 +23,9 @@ class DatabaseService {
 
   final CollectionReference resultsCollection =
       Firestore.instance.collection('results');
+
+  final CollectionReference transactionCollection =
+      Firestore.instance.collection('transaction');
 
   Future updateUserData(String name, String email, int wallet, int gems) async {
     return await usersCollection.document(uid).setData(
@@ -48,19 +51,6 @@ class DatabaseService {
         }
       ])
     }, merge: true);
-  }
-
-  Future<bool> checkIfAdmin() async {
-    bool dog = false;
-    String userId = await AuthService().uID();
-    await usersCollection.document(userId).get().then((value) {
-      dog = value.data['dog'] ?? false;
-    });
-    if (dog) {
-      return true;
-    } else {
-      return false;
-    }
   }
 
   Future addCoinsToWallet(newGems, context) async {
@@ -97,7 +87,25 @@ class DatabaseService {
     CollectionReference userMatchTokens =
         Firestore.instance.collection('userMatchTokens');
 
-    await userMatchTokens.document(matchId).setData({userId: true});
+    await userMatchTokens
+        .document(matchId)
+        .setData({userId: true}, merge: true);
+  }
+
+  Future sendWithdrawlrequest(amount, time, mode, mobileNo) async {
+    String userId = await AuthService().uID();
+    await transactionCollection.document(userId).setData({
+      'transactions': FieldValue.arrayUnion([
+        {
+          'uid': userId,
+          'status': 'pending',
+          'amount': amount,
+          'time': time.toString(),
+          'mode': mode,
+          'mobileNo': mobileNo
+        }
+      ])
+    }, merge: true);
   }
 
   Future addToSubscribedGames(
@@ -187,6 +195,40 @@ class DatabaseService {
     });
   }
 
+  Stream<List<UserTransactions>> getUserPendingTransaction(userId) {
+    return transactionCollection.document(userId).snapshots().map((event) {
+      List<UserTransactions> transactionList = [];
+      List list = event.data['transactions'];
+      for (var i = 0; i < list.length; i++) {
+        if (list[i]['status'] == 'pending') {
+          transactionList.add(new UserTransactions(
+              mode: list[i]['mode'],
+              amount: list[i]['amount'].toString(),
+              mobileNo: list[i]['mobileNo'].toString()));
+        }
+      }
+      // print(transactionList);
+      return transactionList.isNotEmpty ? transactionList : null;
+    });
+  }
+
+  Stream<List<UserTransactions>> getUserCompletedTransaction(userId) {
+    return transactionCollection.document(userId).snapshots().map((event) {
+      List<UserTransactions> transactionList = [];
+      List list = event.data['transactions'];
+      for (var i = 0; i < list.length; i++) {
+        if (list[i]['status'] == 'completed') {
+          transactionList.add(new UserTransactions(
+              mode: list[i]['mode'],
+              amount: list[i]['amount'].toString(),
+              mobileNo: list[i]['mobileNo'].toString()));
+        }
+      }
+      // print(transactionList);
+      return transactionList.isNotEmpty ? transactionList : null;
+    });
+  }
+
   Stream<List<Matches>> get ongoingMatches {
     return matchesCollection
         .where('status', isEqualTo: 'Live')
@@ -273,7 +315,7 @@ class DatabaseService {
     String email;
     int walletMoney;
     int gems;
-    usersCollection.document(userId).get().then((value) {
+    await usersCollection.document(userId).get().then((value) {
       name = value.data['name'];
       email = value.data['email'];
       walletMoney = value.data['walletAmount'];

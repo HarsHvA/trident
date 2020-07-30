@@ -594,6 +594,8 @@ class _BuyCoinPageState extends State<BuyCoinPage> {
       await DatabaseService().addCoinsToWallet(gems, context);
       pr.hide();
       Toast.show('Gems Added!', context);
+      Navigator.pop(context);
+      Navigator.pop(context);
     } catch (e) {
       pr.hide();
       Toast.show('Failed', context);

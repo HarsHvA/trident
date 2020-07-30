@@ -22,8 +22,11 @@ class MatchesDetailsPage extends StatefulWidget {
 
 class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
   String matchId;
-  ProgressDialog pr;
   _MatchesDetailsPageState(this.matchId);
+
+  ProgressDialog pr;
+  bool showParticipants = false;
+
   @override
   Widget build(BuildContext context) {
     double unitHeightValue = MediaQuery.of(context).size.height * 0.01;
@@ -356,42 +359,29 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                         Divider(
                           color: Colors.red.shade900,
                         ),
-                        Text(
-                          'Participants',
-                          style: TextStyle(
-                              fontSize: unitHeightValue * 2.5,
-                              color: Colors.red.shade900),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            child: RaisedButton(
+                              color: Colors.black,
+                              colorBrightness: Brightness.light,
+                              onPressed: () {
+                                setState(() {
+                                  if (showParticipants) {
+                                    showParticipants = false;
+                                  } else {
+                                    showParticipants = true;
+                                  }
+                                });
+                              },
+                              child: Text('Participants'),
+                              textColor: Colors.white,
+                            ),
+                          ),
                         ),
-                        Divider(
-                          color: Colors.red.shade900,
-                        ),
-                        StreamBuilder<List<Participants>>(
-                            stream:
-                                DatabaseService().getParticipantList(matchId),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                return SingleChildScrollView(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  child: DataTable(
-                                      columns: [
-                                        DataColumn(
-                                            label: Text(
-                                          'Game-Id',
-                                          style: TextStyle(color: Colors.red),
-                                        ))
-                                      ],
-                                      rows: snapshot.data
-                                          .map((e) => DataRow(cells: <DataCell>[
-                                                DataCell(Text(e.gameName)),
-                                              ]))
-                                          .toList()),
-                                );
-                              } else {
-                                return Container(
-                                  child: Text('No Participants'),
-                                );
-                              }
-                            }),
+                        _showParticipantsList(
+                            showParticipants, unitHeightValue * 2.5)
                       ],
                     ),
                   )),
@@ -400,10 +390,52 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
         });
   }
 
-  _payment(ticket) async {}
-
   _gameTime(time) {
     return DateFormat.yMMMd().add_jm().format(time);
+  }
+
+  _showParticipantsList(show, textSize) {
+    if (show) {
+      return Column(
+        children: [
+          Text(
+            'Participants',
+            style: TextStyle(fontSize: textSize, color: Colors.red.shade900),
+          ),
+          Divider(
+            color: Colors.red.shade900,
+          ),
+          StreamBuilder<List<Participants>>(
+              stream: DatabaseService().getParticipantList(matchId),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return SingleChildScrollView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    child: DataTable(
+                        columns: [
+                          DataColumn(
+                              label: Text(
+                            'Game-Id',
+                            style: TextStyle(color: Colors.red),
+                          ))
+                        ],
+                        rows: snapshot.data
+                            .map((e) => DataRow(cells: <DataCell>[
+                                  DataCell(Text(e.gameName)),
+                                ]))
+                            .toList()),
+                  );
+                } else {
+                  return Container(
+                    child: Text('No Participants'),
+                  );
+                }
+              }),
+        ],
+      );
+    } else {
+      return Container();
+    }
   }
 
   void _showRoomdetailDialog(roomId, roomPassword) {

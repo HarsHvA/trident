@@ -94,7 +94,7 @@ class _UserPageState extends State<UserPage> {
         switch (index) {
           case 0:
             Navigator.of(context, rootNavigator: true)
-                .push(MaterialPageRoute(builder: (context) => BuyCoinPage()));
+                .push(MaterialPageRoute(builder: (context) => WalletPage()));
             break;
 
           case 1:
