@@ -19,14 +19,14 @@ class PaymentService {
 
   Future<String> createRequest() async {
     Map<String, String> body = {
-      "amount": "9",
+      "amount": amount,
       "purpose": purpose,
       "buyer_name": name,
       "email": email,
       "allow_repeated_payments": "true",
       "send_email": "false",
-      "send_sms": "false", //Where to redirect after a successful payment.
-      "webhook": "http://www.example.com/webhook/",
+      "send_sms": "false",
+      "redirect_url": "https://www.iceagedev.com/blank",
     };
     var resp = await http.post(
         Uri.encodeFull("https://www.instamojo.com/api/1.1/payment-requests/"),

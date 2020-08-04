@@ -1,9 +1,8 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:progress_dialog/progress_dialog.dart';
-import 'package:toast/toast.dart';
 import 'package:trident/models/user_model.dart';
 import 'package:trident/services/database_services.dart';
-import 'package:trident/services/payment_service.dart';
 import 'package:trident/views/payment_view.dart';
 
 class BuyCoinPage extends StatefulWidget with WidgetsBindingObserver {
@@ -76,8 +75,14 @@ class _BuyCoinPageState extends State<BuyCoinPage> {
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                              'You can use these coins to participate in matches'),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.7,
+                            child: AutoSizeText(
+                              'You can use these gems to participate in matches',
+                              wrapWords: true,
+                              style: TextStyle(fontSize: 15),
+                            ),
+                          ),
                         ),
                       ],
                     )),
@@ -629,13 +634,6 @@ class _BuyCoinPageState extends State<BuyCoinPage> {
     pr.show();
     try {
       User user = await DatabaseService().getUserInformation();
-      // await PaymentService(
-      //         context: context,
-      //         name: user.name,
-      //         email: user.email,
-      //         amount: gems.toString(),
-      //         purpose: 'Trident')
-      //     .createRequest();
       pr.hide();
       Navigator.push(
           context,
@@ -645,12 +643,6 @@ class _BuyCoinPageState extends State<BuyCoinPage> {
                   purpose: 'Trident tournament',
                   name: user.name,
                   email: user.email)));
-      // await DatabaseService().addCoinsToWallet(gems, context);
-      // pr.hide();
-      // Toast.show('Gems Added!', context);
-      // Navigator.pop(context);
-      // Navigator.pop(context);
-
     } catch (e) {
       pr.hide();
       print(e.toString());

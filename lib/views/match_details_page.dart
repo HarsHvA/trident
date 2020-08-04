@@ -116,11 +116,23 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                 TableCell(
                                   verticalAlignment:
                                       TableCellVerticalAlignment.middle,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(snapshot.data.maxParticipants
-                                        .toString()),
-                                  ),
+                                  child: StreamBuilder<List<Participants>>(
+                                      stream: DatabaseService()
+                                          .getParticipantList(matchId),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData) {
+                                          return Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(snapshot.data.length
+                                                .toString()),
+                                          );
+                                        } else {
+                                          return Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text('Loading...'),
+                                          );
+                                        }
+                                      }),
                                 )
                               ]),
                               TableRow(children: [
@@ -221,6 +233,42 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                                 Image.asset('assets/gems.png')),
                                       ],
                                     ),
+                                  ),
+                                )
+                              ]),
+                              TableRow(children: [
+                                TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text("status"),
+                                  ),
+                                ),
+                                TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(snapshot.data.status),
+                                  ),
+                                )
+                              ]),
+                              TableRow(children: [
+                                TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text("Description"),
+                                  ),
+                                ),
+                                TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(''), //TODO: add description
                                   ),
                                 )
                               ]),
@@ -532,20 +580,21 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
             matchId, value.gameName, value.name, game, matchNo);
       });
       await DatabaseService().addToSubscribedGames(
-          matchId,
-          game,
-          name,
-          ticket,
-          status,
-          imageUrl,
-          map,
-          matchNo,
-          maxParticipants,
-          perKill,
-          prizePool,
-          time,
-          roomId,
-          roomPassword);
+        matchId,
+        game,
+        name,
+        ticket,
+        status,
+        imageUrl,
+        map,
+        matchNo,
+        maxParticipants,
+        perKill,
+        prizePool,
+        time,
+        roomId,
+        roomPassword,
+      );
       await DatabaseService().generateUserMatchToken(matchId);
       Toast.show('Match Joined', context);
       pr.hide();

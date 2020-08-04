@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:trident/models/match_models.dart';
 import 'package:trident/services/auth_service.dart';
 import 'package:trident/services/database_services.dart';
-import 'package:trident/widgets/match_tile.dart';
+import 'package:trident/widgets/myMatchTile.dart';
 
 class MyMatchesTab extends StatefulWidget {
   @override
@@ -25,7 +25,7 @@ class _MyMatchesTabState extends State<MyMatchesTab> {
                     child: ListView.builder(
                         itemCount: snapshot.data.length,
                         itemBuilder: (context, index) {
-                          return MatchTile(
+                          return MyMatchTile(
                             matches: snapshot.data[index],
                           );
                         }),

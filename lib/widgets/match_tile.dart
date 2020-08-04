@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:toast/toast.dart';
 import 'package:trident/models/match_models.dart';
+import 'package:trident/models/participant_models.dart';
 import 'package:trident/services/database_services.dart';
 import 'package:trident/views/match_details_page.dart';
 
@@ -77,25 +78,36 @@ class MatchTile extends StatelessWidget {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: <Widget>[
-                              Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: AutoSizeText(
-                                    matches.status,
-                                    style: TextStyle(
-                                        backgroundColor: Colors.red.shade900,
-                                        fontSize: unitHeightValue * 1.5,
-                                        color: Colors.white),
-                                  )),
-                              Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: AutoSizeText(
-                                    "100" +
-                                        "/" +
-                                        matches.maxParticipants.toString(),
-                                    style: TextStyle(
-                                        fontSize: unitHeightValue * 2.5,
-                                        color: Colors.white)),
-                              ),
+                              StreamBuilder<List<Participants>>(
+                                  stream: DatabaseService()
+                                      .getParticipantList(matches.id),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData) {
+                                      return Padding(
+                                        padding: const EdgeInsets.all(5.0),
+                                        child: AutoSizeText(
+                                            snapshot.data.length.toString() +
+                                                "/" +
+                                                matches.maxParticipants
+                                                    .toString(),
+                                            style: TextStyle(
+                                                fontSize: unitHeightValue * 2.5,
+                                                color: Colors.white)),
+                                      );
+                                    } else {
+                                      return Padding(
+                                        padding: const EdgeInsets.all(5.0),
+                                        child: AutoSizeText(
+                                            "0" +
+                                                "/" +
+                                                matches.maxParticipants
+                                                    .toString(),
+                                            style: TextStyle(
+                                                fontSize: unitHeightValue * 2.5,
+                                                color: Colors.white)),
+                                      );
+                                    }
+                                  }),
                             ],
                           ),
                         ),
@@ -104,13 +116,14 @@ class MatchTile extends StatelessWidget {
                         child: Align(
                           alignment: Alignment.bottomLeft,
                           child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: AutoSizeText(
-                                "\u20B9" + matches.perKill.toString() + "/kill",
+                              padding: const EdgeInsets.all(8.0),
+                              child: AutoSizeText(
+                                matches.status,
                                 style: TextStyle(
-                                    fontSize: unitHeightValue * 2.5,
-                                    color: Colors.white)),
-                          ),
+                                    backgroundColor: Colors.red.shade900,
+                                    fontSize: unitHeightValue * 1.5,
+                                    color: Colors.white),
+                              )),
                         ),
                       )
                     ])

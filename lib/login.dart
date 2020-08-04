@@ -57,152 +57,156 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
       ),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            SizedBox(height: _height * 0.025),
-            showAlert(),
-            SizedBox(height: _height * 0.025),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      FadeAnimation(
-                          1,
-                          Text(
-                            "Login",
-                            style: TextStyle(
-                                fontSize: unitHeightValue * 3,
-                                fontWeight: FontWeight.bold),
-                          )),
-                      SizedBox(
-                        height: unitHeightValue * 2,
-                      ),
-                      FadeAnimation(
-                          1.2,
-                          Text(
-                            "Login to your account",
-                            style: TextStyle(
-                                fontSize: unitHeightValue * 1.8,
-                                color: Colors.grey[700]),
-                          )),
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40),
-                    child: Form(
-                      key: formKey,
-                      autovalidate: _autoValidate,
-                      child: Column(
-                        children: <Widget>[
-                          FadeAnimation(
-                              1.2,
-                              makeInput(
-                                  label: "Email", validator: validateEmail)),
-                          FadeAnimation(
-                              1.3,
-                              makeInput(
-                                  label: "Password",
-                                  obscureText: true,
-                                  validator: validatePassword))
-                        ],
-                      ),
-                    ),
-                  ),
-                  FadeAnimation(
-                      1.4,
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 40),
-                        child: Container(
-                          padding: EdgeInsets.only(top: 3, left: 3),
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.circular(unitWidthValue * 8),
-                              border: Border(
-                                bottom: BorderSide(color: Colors.black),
-                                top: BorderSide(color: Colors.black),
-                                left: BorderSide(color: Colors.black),
-                                right: BorderSide(color: Colors.black),
-                              )),
-                          child: MaterialButton(
-                            minWidth: double.infinity,
-                            height: unitHeightValue * 7,
-                            onPressed: () {
-                              if (formKey.currentState.validate()) {
-                                formKey.currentState.save();
-                                submit();
-                              } else {
-                                setState(() => _autoValidate = true);
-                              }
-                            },
-                            color: Colors.greenAccent,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50)),
-                            child: Text(
+      body: SingleChildScrollView(
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          width: double.infinity,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              SizedBox(height: _height * 0.025),
+              showAlert(),
+              SizedBox(height: _height * 0.025),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        FadeAnimation(
+                            1,
+                            Text(
                               "Login",
                               style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: unitHeightValue * 1.8),
-                            ),
-                          ),
+                                  fontSize: unitHeightValue * 3,
+                                  fontWeight: FontWeight.bold),
+                            )),
+                        SizedBox(
+                          height: unitHeightValue * 2,
                         ),
-                      )),
-                  Column(children: <Widget>[
-                    FadeAnimation(
-                        1.5,
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ResetPasswordPage()));
-                          },
-                          child: Text(
-                            "Forgot Password!",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: unitHeightValue * 1.7),
-                          ),
-                        )),
-                    SizedBox(
-                      height: unitHeightValue * 1,
+                        FadeAnimation(
+                            1.2,
+                            Text(
+                              "Login to your account",
+                              style: TextStyle(
+                                  fontSize: unitHeightValue * 1.8,
+                                  color: Colors.grey[700]),
+                            )),
+                      ],
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 40),
+                      child: Form(
+                        key: formKey,
+                        autovalidate: _autoValidate,
+                        child: Column(
+                          children: <Widget>[
+                            FadeAnimation(
+                                1.2,
+                                makeInput(
+                                    label: "Email", validator: validateEmail)),
+                            FadeAnimation(
+                                1.3,
+                                makeInput(
+                                    label: "Password",
+                                    obscureText: true,
+                                    validator: validatePassword))
+                          ],
+                        ),
+                      ),
                     ),
                     FadeAnimation(
-                        1.6,
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              "Don't have an account?",
-                              style: TextStyle(fontSize: unitHeightValue * 1.7),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => SignupPage()));
+                        1.4,
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 40),
+                          child: Container(
+                            padding: EdgeInsets.only(top: 3, left: 3),
+                            decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.circular(unitWidthValue * 8),
+                                border: Border(
+                                  bottom: BorderSide(color: Colors.black),
+                                  top: BorderSide(color: Colors.black),
+                                  left: BorderSide(color: Colors.black),
+                                  right: BorderSide(color: Colors.black),
+                                )),
+                            child: MaterialButton(
+                              minWidth: double.infinity,
+                              height: unitHeightValue * 7,
+                              onPressed: () {
+                                if (formKey.currentState.validate()) {
+                                  formKey.currentState.save();
+                                  submit();
+                                } else {
+                                  setState(() => _autoValidate = true);
+                                }
                               },
+                              color: Colors.greenAccent,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(50)),
                               child: Text(
-                                "Sign up",
+                                "Login",
                                 style: TextStyle(
                                     fontWeight: FontWeight.w600,
-                                    fontSize: unitHeightValue * 2),
+                                    fontSize: unitHeightValue * 1.8),
                               ),
                             ),
-                          ],
-                        ))
-                  ])
-                ],
+                          ),
+                        )),
+                    Column(children: <Widget>[
+                      FadeAnimation(
+                          1.5,
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          ResetPasswordPage()));
+                            },
+                            child: Text(
+                              "Forgot Password!",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: unitHeightValue * 1.7),
+                            ),
+                          )),
+                      SizedBox(
+                        height: unitHeightValue * 1,
+                      ),
+                      FadeAnimation(
+                          1.6,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                "Don't have an account?",
+                                style:
+                                    TextStyle(fontSize: unitHeightValue * 1.7),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => SignupPage()));
+                                },
+                                child: Text(
+                                  "Sign up",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: unitHeightValue * 2),
+                                ),
+                              ),
+                            ],
+                          ))
+                    ])
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

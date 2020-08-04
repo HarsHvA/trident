@@ -53,7 +53,7 @@ class DatabaseService {
     }, merge: true);
   }
 
-  Future addCoinsToWallet(newGems, context) async {
+  Future addCoinsToWallet(newGems) async {
     String userId = await AuthService().uID();
     int gems = await usersCollection.document(userId).get().then((value) {
       return value.data['gems'] ?? 0;

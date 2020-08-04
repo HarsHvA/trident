@@ -243,7 +243,7 @@ class _WalletPageState extends State<WalletPage> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text('Send Withdrawl request'),
+                        child: Text('Send Withdrawal request'),
                       ),
                       _buildFormInput('Mode'),
                       _buildFormInput('MobileNumber'),
