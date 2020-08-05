@@ -315,16 +315,26 @@ class DatabaseService {
     String email;
     int walletMoney;
     int gems;
+    String pubgId;
+    String codId;
+    String freefireId;
     await usersCollection.document(userId).get().then((value) {
       name = value.data['name'];
       email = value.data['email'];
       walletMoney = value.data['walletAmount'];
       gems = value.data['gems'];
+      pubgId = value.data['PUBG Mobile'];
+      codId = value.data['COD'];
+      freefireId = value.data['Freefire'];
     });
     return User(
-        name: name ?? '',
-        email: email ?? '',
-        walletMoney: walletMoney ?? 0,
-        gems: gems ?? 0);
+      name: name ?? '',
+      email: email ?? '',
+      walletMoney: walletMoney ?? 0,
+      gems: gems ?? 0,
+      pubgId: pubgId,
+      freefireId: freefireId,
+      codId: codId,
+    );
   }
 }

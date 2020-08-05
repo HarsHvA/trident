@@ -16,7 +16,7 @@ class _UserFeedState extends State<UserFeed> {
 
   var buttonIcon = Icons.arrow_drop_down;
 
-  final tabs = [_homeTab(), _privateTab(), _notificationTab(), _meTab()];
+  final tabs = [_homeTab(), _privateTab(), _meTab()];
 
   _onItemTapped(int index) {
     if (this.mounted) {
@@ -45,10 +45,6 @@ class _UserFeedState extends State<UserFeed> {
               title: Text('Ongoing'),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.notifications),
-              title: Text('Notification'),
-            ),
-            BottomNavigationBarItem(
               icon: Icon(Icons.person),
               title: Text('MyAccount'),
             ),
@@ -71,8 +67,4 @@ _privateTab() {
 
 _meTab() {
   return UserPage();
-}
-
-_notificationTab() {
-  return NotificationPage();
 }

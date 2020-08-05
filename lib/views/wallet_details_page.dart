@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import "package:flutter/material.dart";
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:trident/models/user_model.dart';
 import 'package:trident/services/auth_service.dart';
@@ -120,7 +121,9 @@ class _WalletPageState extends State<WalletPage> {
                                 child: RaisedButton(
                                   color: Colors.red,
                                   colorBrightness: Brightness.light,
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    await _sendMail('Help with buying gems');
+                                  },
                                   child: Text('Help'),
                                   textColor: Colors.white,
                                 ),
@@ -185,7 +188,9 @@ class _WalletPageState extends State<WalletPage> {
                                 child: RaisedButton(
                                   color: Colors.red,
                                   colorBrightness: Brightness.light,
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    await _sendMail('Help with withdrawal');
+                                  },
                                   child: Text('Help'),
                                   textColor: Colors.white,
                                 ),
@@ -392,5 +397,22 @@ _getHints(label) {
     return 'Paytm/PhonePay';
   } else {
     return 'Mobile no';
+  }
+}
+
+Future<void> _sendMail(subject) async {
+  final Email email = Email(
+    subject: 'Subject : ' + subject,
+    // TODO: change recipenits
+    recipients: ['rockssharsh0001@gmail.com'],
+  );
+
+  String platformResponse;
+
+  try {
+    await FlutterEmailSender.send(email);
+    platformResponse = 'success';
+  } catch (error) {
+    platformResponse = error.toString();
   }
 }

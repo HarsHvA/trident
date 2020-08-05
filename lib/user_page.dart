@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:toast/toast.dart';
 import 'package:trident/openingPage.dart';
 import 'package:trident/top_bar.dart';
-import 'package:trident/views/account_details_page.dart';
-import 'package:trident/views/buy_coin.dart';
+import 'package:trident/views/profile_page.dart';
 import 'package:trident/views/wallet_details_page.dart';
 import 'package:trident/widgets/provider_widget.dart';
 
@@ -99,14 +99,14 @@ class _UserPageState extends State<UserPage> {
 
           case 1:
             Navigator.push(this.context,
-                MaterialPageRoute(builder: (context) => AccountDetails()));
+                MaterialPageRoute(builder: (context) => ProfilePage()));
             break;
 
           case 2:
             Toast.show(label, context);
             break;
           case 3:
-            Toast.show(label, context);
+            _sendMail('Feedback');
             break;
           case 4:
             _logout();
@@ -121,5 +121,22 @@ class _UserPageState extends State<UserPage> {
     auth.signOut();
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => OpeningPage()));
+  }
+
+  Future<void> _sendMail(subject) async {
+    final Email email = Email(
+      subject: 'Subject : ' + subject,
+      // TODO: change recipenits
+      recipients: ['rockssharsh0001@gmail.com'],
+    );
+
+    String platformResponse;
+
+    try {
+      await FlutterEmailSender.send(email);
+      platformResponse = 'success';
+    } catch (error) {
+      platformResponse = error.toString();
+    }
   }
 }

@@ -175,7 +175,7 @@ class _CompletedTabState extends State<CompletedTab> {
                                 .toList()));
                   } else {
                     return Container(
-                      child: AutoSizeText('No pending transactions :-)'),
+                      child: AutoSizeText('No Completed transactions :-)'),
                     );
                   }
                 }),

@@ -50,7 +50,7 @@ class AuthService {
       String name = user.displayName;
       return name;
     } catch (e) {
-      print(e.message);
+      print(e.toString());
       return "";
     }
   }
