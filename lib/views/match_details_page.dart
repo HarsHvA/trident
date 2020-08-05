@@ -129,10 +129,30 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                         } else {
                                           return Padding(
                                             padding: const EdgeInsets.all(8.0),
-                                            child: Text('Loading...'),
+                                            child: Text('0'),
                                           );
                                         }
                                       }),
+                                )
+                              ]),
+                              TableRow(children: [
+                                TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text("Max participats"),
+                                  ),
+                                ),
+                                TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(snapshot.data.maxParticipants
+                                            .toString() ??
+                                        0),
+                                  ),
                                 )
                               ]),
                               TableRow(children: [
@@ -268,7 +288,8 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                       TableCellVerticalAlignment.middle,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Text(''), //TODO: add description
+                                    child: Text(snapshot.data.description ??
+                                        ''), //TODO: add description
                                   ),
                                 )
                               ]),
@@ -278,131 +299,162 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: <Widget>[
-                              Container(
-                                width: MediaQuery.of(context).size.width,
-                                child: RaisedButton(
-                                  color: Colors.green,
-                                  colorBrightness: Brightness.light,
-                                  onPressed: () async {
-                                    if (snapshot.data.status.toLowerCase() ==
-                                        'upcoming') {
-                                      pr.show();
-                                      bool joined = false;
-                                      try {
-                                        joined = await DatabaseService()
-                                            .checkMatchJoined(matchId);
-                                      } catch (e) {
-                                        print(e);
-                                      }
-                                      if (joined) {
-                                        pr.hide();
-                                        Toast.show(
-                                            'You have already joined the match',
-                                            context);
-                                      } else {
-                                        _getGemsToPlay(
-                                            snapshot.data.ticket,
-                                            matchId,
-                                            snapshot.data.game,
-                                            snapshot.data.name,
-                                            snapshot.data.ticket,
-                                            snapshot.data.status,
-                                            snapshot.data.imageUrl,
-                                            snapshot.data.map,
-                                            snapshot.data.matchNo,
-                                            snapshot.data.maxParticipants,
-                                            snapshot.data.perKill,
-                                            snapshot.data.prizePool,
-                                            snapshot.data.time,
-                                            snapshot.data.roomId,
-                                            snapshot.data.roomPassword);
-                                      }
-                                    } else {
-                                      Navigator.of(context, rootNavigator: true)
-                                          .push(MaterialPageRoute(
-                                              builder: (context) => ResultPage(
-                                                  matchId: matchId)));
-                                    }
-                                  },
-                                  child: (snapshot.data.status.toLowerCase() ==
-                                          'upcoming')
-                                      ? Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text('Pay '),
-                                            Text(snapshot.data.ticket
-                                                .toString()),
-                                            Container(
-                                                width: unitWidthValue * 3,
-                                                height: unitHeightValue * 3,
-                                                child: Image.asset(
-                                                    'assets/gems.png')),
-                                          ],
-                                        )
-                                      : Text('Fixtures'),
-                                  textColor: Colors.white,
-                                ),
-                              ),
-                              Container(
-                                width: MediaQuery.of(context).size.width,
-                                child: RaisedButton(
-                                  color: Colors.red,
-                                  colorBrightness: Brightness.light,
-                                  onPressed: () {
-                                    _shareMatchDetails(
-                                        snapshot.data.game,
-                                        _gameTime(snapshot.data.time.toDate()),
-                                        snapshot.data.prizePool);
-                                  },
-                                  child: Text('Share match details'),
-                                  textColor: Colors.white,
-                                ),
-                              ),
-                              FutureBuilder<bool>(
-                                  future: DatabaseService()
-                                      .checkMatchJoined(matchId),
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot<bool> snap) {
-                                    switch (snap.connectionState) {
-                                      case ConnectionState.waiting:
-                                        return Container();
-
-                                      default:
-                                        if (snap.hasError) {
-                                          return Container();
-                                        } else {
-                                          if (snap.data) {
-                                            return Container(
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              child: RaisedButton(
-                                                color: Colors.black,
-                                                colorBrightness:
-                                                    Brightness.light,
-                                                onPressed: () {
-                                                  _showRoomdetailDialog(
-                                                      snapshot.data.roomId ??
-                                                          'NA',
-                                                      snapshot.data
-                                                              .roomPassword ??
-                                                          'NA');
-                                                },
-                                                child: Text('Room details'),
-                                                textColor: Colors.white,
-                                              ),
-                                            );
+                          child: FutureBuilder<int>(
+                              future: DatabaseService()
+                                  .getParticipantsListLength(matchId),
+                              builder: (context, snap) {
+                                return Column(
+                                  children: <Widget>[
+                                    Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      child: RaisedButton(
+                                        color: Colors.green,
+                                        colorBrightness: Brightness.light,
+                                        onPressed: () async {
+                                          if (snapshot.data.status
+                                                  .toLowerCase() ==
+                                              'upcoming') {
+                                            pr.show();
+                                            bool joined = false;
+                                            try {
+                                              joined = await DatabaseService()
+                                                  .checkMatchJoined(matchId);
+                                            } catch (e) {
+                                              print(e);
+                                            }
+                                            if (joined) {
+                                              pr.hide();
+                                              Toast.show(
+                                                  'You have already joined the match',
+                                                  context);
+                                            } else {
+                                              if (snap.hasData) {
+                                                if (snap.data <
+                                                    snapshot
+                                                        .data.maxParticipants) {
+                                                  _getGemsToPlay(
+                                                      snapshot.data.ticket,
+                                                      matchId,
+                                                      snapshot.data.game,
+                                                      snapshot.data.name,
+                                                      snapshot.data.ticket,
+                                                      snapshot.data.status,
+                                                      snapshot.data.imageUrl,
+                                                      snapshot.data.map,
+                                                      snapshot.data.matchNo,
+                                                      snapshot
+                                                          .data.maxParticipants,
+                                                      snapshot.data.perKill,
+                                                      snapshot.data.prizePool,
+                                                      snapshot.data.time,
+                                                      snapshot.data.roomId,
+                                                      snapshot
+                                                          .data.roomPassword);
+                                                } else {
+                                                  pr.hide();
+                                                  Toast.show(
+                                                      'Match full', context);
+                                                }
+                                              } else {
+                                                pr.hide();
+                                                Toast.show(
+                                                    'OPPS! something happned',
+                                                    context);
+                                              }
+                                            }
                                           } else {
-                                            return Container();
+                                            Navigator.of(context,
+                                                    rootNavigator: true)
+                                                .push(MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ResultPage(
+                                                            matchId: matchId)));
                                           }
-                                        }
-                                    }
-                                  }),
-                            ],
-                          ),
+                                        },
+                                        child: (snapshot.data.status
+                                                    .toLowerCase() ==
+                                                'upcoming')
+                                            ? Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text('Pay '),
+                                                  Text(snapshot.data.ticket
+                                                      .toString()),
+                                                  Container(
+                                                      width: unitWidthValue * 3,
+                                                      height:
+                                                          unitHeightValue * 3,
+                                                      child: Image.asset(
+                                                          'assets/gems.png')),
+                                                ],
+                                              )
+                                            : Text('Fixtures'),
+                                        textColor: Colors.white,
+                                      ),
+                                    ),
+                                    Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      child: RaisedButton(
+                                        color: Colors.red,
+                                        colorBrightness: Brightness.light,
+                                        onPressed: () {
+                                          _shareMatchDetails(
+                                              snapshot.data.game,
+                                              _gameTime(
+                                                  snapshot.data.time.toDate()),
+                                              snapshot.data.prizePool);
+                                        },
+                                        child: Text('Share match details'),
+                                        textColor: Colors.white,
+                                      ),
+                                    ),
+                                    FutureBuilder<bool>(
+                                        future: DatabaseService()
+                                            .checkMatchJoined(matchId),
+                                        builder: (BuildContext context,
+                                            AsyncSnapshot<bool> snap) {
+                                          switch (snap.connectionState) {
+                                            case ConnectionState.waiting:
+                                              return Container();
+
+                                            default:
+                                              if (snap.hasError) {
+                                                return Container();
+                                              } else {
+                                                if (snap.data) {
+                                                  return Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .width,
+                                                    child: RaisedButton(
+                                                      color: Colors.black,
+                                                      colorBrightness:
+                                                          Brightness.light,
+                                                      onPressed: () {
+                                                        _showRoomdetailDialog(
+                                                            snapshot.data
+                                                                    .roomId ??
+                                                                'NA',
+                                                            snapshot.data
+                                                                    .roomPassword ??
+                                                                'NA');
+                                                      },
+                                                      child:
+                                                          Text('Room details'),
+                                                      textColor: Colors.white,
+                                                    ),
+                                                  );
+                                                } else {
+                                                  return Container();
+                                                }
+                                              }
+                                          }
+                                        }),
+                                  ],
+                                );
+                              }),
                         ),
                         Divider(
                           color: Colors.red.shade900,
@@ -604,8 +656,6 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
       pr.hide();
     }
   }
-
-  _getButtonText(String status, int ticket) {}
 
   Future _getGemsToPlay(
       gemsRequired,

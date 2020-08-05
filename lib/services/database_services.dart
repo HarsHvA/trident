@@ -24,8 +24,11 @@ class DatabaseService {
   final CollectionReference resultsCollection =
       Firestore.instance.collection('results');
 
-  final CollectionReference transactionCollection =
+  final CollectionReference pendingTransactionCollection =
       Firestore.instance.collection('transaction');
+
+  final CollectionReference completedTransactionCollection =
+      Firestore.instance.collection('completedTransaction');
 
   Future updateUserData(String name, String email, int wallet, int gems) async {
     return await usersCollection.document(uid).setData(
@@ -94,7 +97,7 @@ class DatabaseService {
 
   Future sendWithdrawlrequest(amount, time, mode, mobileNo) async {
     String userId = await AuthService().uID();
-    await transactionCollection.document(userId).setData({
+    await pendingTransactionCollection.document(userId).setData({
       'transactions': FieldValue.arrayUnion([
         {
           'uid': userId,
@@ -195,8 +198,24 @@ class DatabaseService {
     });
   }
 
+  Future<int> getParticipantsListLength(matchId) async {
+    int length = 0;
+    try {
+      await participantsCollection.document(matchId).get().then((value) {
+        List list = value.data['participants'];
+        length = list.length;
+      });
+    } catch (e) {
+      length = 0;
+    }
+    return length;
+  }
+
   Stream<List<UserTransactions>> getUserPendingTransaction(userId) {
-    return transactionCollection.document(userId).snapshots().map((event) {
+    return pendingTransactionCollection
+        .document(userId)
+        .snapshots()
+        .map((event) {
       List<UserTransactions> transactionList = [];
       List list = event.data['transactions'];
       for (var i = 0; i < list.length; i++) {
@@ -213,7 +232,10 @@ class DatabaseService {
   }
 
   Stream<List<UserTransactions>> getUserCompletedTransaction(userId) {
-    return transactionCollection.document(userId).snapshots().map((event) {
+    return completedTransactionCollection
+        .document(userId)
+        .snapshots()
+        .map((event) {
       List<UserTransactions> transactionList = [];
       List list = event.data['transactions'];
       for (var i = 0; i < list.length; i++) {
@@ -292,7 +314,8 @@ class DatabaseService {
           time: value.data['time'],
           id: value.documentID,
           roomId: value.data['roomId'],
-          roomPassword: value.data['roomPassword']);
+          roomPassword: value.data['roomPassword'],
+          description: value.data['description']);
     });
   }
 
