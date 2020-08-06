@@ -35,6 +35,19 @@ class DatabaseService {
         {'name': name, 'email': email, 'walletAmount': wallet, 'gems': 0});
   }
 
+  Future updateUserProfile(
+      String name, String pubg, String cod, String freefire) async {
+    String userId = await AuthService().uID();
+    await Firestore.instance.runTransaction((transaction) async {
+      await transaction.update(usersCollection.document(userId), {
+        'name': name,
+        'PUBG Mobile': pubg,
+        'CallOfDuty': cod,
+        'Freefire': freefire
+      });
+    });
+  }
+
   Future updateUserGameName(game, id) async {
     String userId = await AuthService().uID();
     return await usersCollection.document(userId).updateData({game: id});
@@ -103,7 +116,6 @@ class DatabaseService {
           'uid': userId,
           'status': 'pending',
           'amount': amount,
-          'time': time.toString(),
           'mode': mode,
           'mobileNo': mobileNo
         }
@@ -347,7 +359,7 @@ class DatabaseService {
       walletMoney = value.data['walletAmount'];
       gems = value.data['gems'];
       pubgId = value.data['PUBG Mobile'];
-      codId = value.data['COD'];
+      codId = value.data['CallOfDuty'];
       freefireId = value.data['Freefire'];
     });
     return User(

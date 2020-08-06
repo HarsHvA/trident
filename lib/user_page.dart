@@ -98,8 +98,8 @@ class _UserPageState extends State<UserPage> {
             break;
 
           case 1:
-            Navigator.push(this.context,
-                MaterialPageRoute(builder: (context) => ProfilePage()));
+            Navigator.of(context, rootNavigator: true)
+                .push(MaterialPageRoute(builder: (context) => ProfilePage()));
             break;
 
           case 2:

@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:trident/views/notification_page.dart';
 import 'package:trident/views/ongoing_games_tab.dart';
 import 'package:trident/views/user_home_tab.dart';
 import 'package:trident/user_page.dart';
@@ -16,8 +15,11 @@ class _UserFeedState extends State<UserFeed> {
 
   var buttonIcon = Icons.arrow_drop_down;
 
-  final tabs = [_homeTab(), _privateTab(), _meTab()];
+  static final GameHomePage _home = GameHomePage();
+  static final OngoingGamesTab _ongoingView = OngoingGamesTab();
+  static final UserPage _userView = UserPage();
 
+  final tabs = [_home, _ongoingView, _userView];
   _onItemTapped(int index) {
     if (this.mounted) {
       setState(() {
@@ -54,17 +56,4 @@ class _UserFeedState extends State<UserFeed> {
           onTap: _onItemTapped,
         ));
   }
-}
-
-// Tabs
-_homeTab() {
-  return GameHomePage();
-}
-
-_privateTab() {
-  return OngoingGamesTab();
-}
-
-_meTab() {
-  return UserPage();
 }

@@ -14,7 +14,7 @@ class MapScreenState extends State<ProfilePage>
   bool _status = true;
   final FocusNode myFocusNode = FocusNode();
   final formKey = GlobalKey<FormState>();
-  String _name, _email, _pubg, _cod, _freefire;
+  String _name, _pubg, _cod, _freefire;
   @override
   void initState() {
     super.initState();
@@ -28,299 +28,313 @@ class MapScreenState extends State<ProfilePage>
       child: FutureBuilder<User>(
           future: DatabaseService().getUserInformation(),
           builder: (context, snapshot) {
-            return new ListView(
-              children: <Widget>[
-                Form(
-                  key: formKey,
-                  child: Column(
-                    children: <Widget>[
-                      new Container(
-                        height: 250.0,
-                        color: Colors.red.shade900,
-                        child: new Column(
-                          children: <Widget>[
-                            Padding(
-                                padding: EdgeInsets.only(left: 20.0, top: 20.0),
-                                child: new Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    GestureDetector(
-                                      child: new Icon(
-                                        Icons.arrow_back_ios,
-                                        color: Colors.white,
-                                        size: 22.0,
-                                      ),
-                                      onTap: () => Navigator.pop(context),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 25.0),
-                                      child: new Text('PROFILE',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20.0,
-                                              fontFamily: 'sans-serif-light',
-                                              color: Colors.white)),
-                                    )
-                                  ],
-                                )),
-                            Padding(
-                              padding: EdgeInsets.only(top: 20.0),
-                              child: new Stack(
-                                  fit: StackFit.loose,
-                                  children: <Widget>[
-                                    new Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        new Container(
-                                            width: 140.0,
-                                            height: 140.0,
-                                            decoration: new BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              image: new DecorationImage(
-                                                image: new ExactAssetImage(
-                                                    'assets/default_avatar.jpg'),
-                                                fit: BoxFit.cover,
-                                              ),
-                                            )),
-                                      ],
-                                    ),
-                                    GestureDetector(
-                                      child: Padding(
-                                          padding: EdgeInsets.only(
-                                              top: 90.0, right: 100.0),
-                                          child: new Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: <Widget>[
-                                              new CircleAvatar(
-                                                backgroundColor: Colors.red,
-                                                radius: 25.0,
-                                                child: new Icon(
-                                                  Icons.camera_alt,
-                                                  color: Colors.white,
-                                                ),
-                                              )
-                                            ],
-                                          )),
-                                      onTap: () => Toast.show(
-                                          'Feature coming soon!', context),
-                                    ),
-                                  ]),
-                            )
-                          ],
-                        ),
-                      ),
-                      new Container(
-                        color: Color(0xffFFFFFF),
-                        child: Padding(
-                          padding: EdgeInsets.only(bottom: 25.0),
+            if (snapshot.hasData) {
+              return new ListView(
+                children: <Widget>[
+                  Form(
+                    key: formKey,
+                    child: Column(
+                      children: <Widget>[
+                        new Container(
+                          height: 250.0,
+                          color: Colors.red.shade900,
                           child: new Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
                               Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 25.0, right: 25.0, top: 25.0),
+                                  padding:
+                                      EdgeInsets.only(left: 20.0, top: 20.0),
                                   child: new Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    mainAxisSize: MainAxisSize.max,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
-                                      new Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          new Text(
-                                            'Personal Information',
-                                            style: TextStyle(
-                                                fontSize: 18.0,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
+                                      GestureDetector(
+                                        child: new Icon(
+                                          Icons.arrow_back_ios,
+                                          color: Colors.white,
+                                          size: 22.0,
+                                        ),
+                                        onTap: () => Navigator.pop(context),
                                       ),
-                                      new Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          _status
-                                              ? _getEditIcon()
-                                              : new Container(),
-                                        ],
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 25.0),
+                                        child: new Text('PROFILE',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20.0,
+                                                fontFamily: 'sans-serif-light',
+                                                color: Colors.white)),
                                       )
                                     ],
                                   )),
                               Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 25.0, right: 25.0, top: 25.0),
-                                  child: new Row(
-                                    mainAxisSize: MainAxisSize.max,
+                                padding: EdgeInsets.only(top: 20.0),
+                                child: new Stack(
+                                    fit: StackFit.loose,
                                     children: <Widget>[
-                                      new Column(
+                                      new Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
                                         mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
+                                            MainAxisAlignment.center,
                                         children: <Widget>[
-                                          new Text(
-                                            'Name',
-                                            style: TextStyle(
-                                                fontSize: 16.0,
-                                                fontWeight: FontWeight.bold),
-                                          ),
+                                          new Container(
+                                              width: 140.0,
+                                              height: 140.0,
+                                              decoration: new BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                image: new DecorationImage(
+                                                  image: new ExactAssetImage(
+                                                      'assets/default_avatar.jpg'),
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              )),
                                         ],
                                       ),
-                                    ],
-                                  )),
-                              Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 25.0, right: 25.0, top: 2.0),
-                                  child: new Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: <Widget>[
-                                      new Flexible(
-                                        child: new TextFormField(
-                                          decoration: InputDecoration(
-                                            hintText: snapshot.hasData
-                                                ? snapshot.data.name
-                                                : "Enter Your Name",
-                                          ),
-                                          enabled: !_status,
-                                          autofocus: !_status,
-                                        ),
+                                      GestureDetector(
+                                        child: Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 90.0, right: 100.0),
+                                            child: new Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                new CircleAvatar(
+                                                  backgroundColor: Colors.red,
+                                                  radius: 25.0,
+                                                  child: new Icon(
+                                                    Icons.camera_alt,
+                                                    color: Colors.white,
+                                                  ),
+                                                )
+                                              ],
+                                            )),
+                                        onTap: () => Toast.show(
+                                            'Feature coming soon!', context),
                                       ),
-                                    ],
-                                  )),
-                              Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 25.0, right: 25.0, top: 25.0),
-                                  child: new Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: <Widget>[
-                                      new Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          new Text(
-                                            'Pubg-Id',
-                                            style: TextStyle(
-                                                fontSize: 16.0,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  )),
-                              Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 25.0, right: 25.0, top: 2.0),
-                                  child: new Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: <Widget>[
-                                      new Flexible(
-                                        child: new TextFormField(
-                                          decoration: InputDecoration(
-                                              hintText: snapshot.hasData
-                                                  ? (snapshot.data.pubgId ??
-                                                      "Enter Pubg Id")
-                                                  : "Enter Pubg Id"),
-                                          enabled: !_status,
-                                        ),
-                                      ),
-                                    ],
-                                  )),
-                              Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 25.0, right: 25.0, top: 25.0),
-                                  child: new Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: <Widget>[
-                                      new Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          new Text(
-                                            'Cod-Id',
-                                            style: TextStyle(
-                                                fontSize: 16.0,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  )),
-                              Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 25.0, right: 25.0, top: 2.0),
-                                  child: new Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: <Widget>[
-                                      new Flexible(
-                                        child: new TextFormField(
-                                          decoration: InputDecoration(
-                                              hintText: snapshot.hasData
-                                                  ? (snapshot.data.codId ??
-                                                      "Enter COD mobile Id")
-                                                  : "Enter COD mobile Id"),
-                                          enabled: !_status,
-                                        ),
-                                      ),
-                                    ],
-                                  )),
-                              Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 25.0, right: 25.0, top: 25.0),
-                                  child: new Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: <Widget>[
-                                      new Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          new Text(
-                                            'Freefire-Id',
-                                            style: TextStyle(
-                                                fontSize: 16.0,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  )),
-                              Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 25.0, right: 25.0, top: 2.0),
-                                  child: new Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: <Widget>[
-                                      new Flexible(
-                                        child: new TextFormField(
-                                          decoration: InputDecoration(
-                                              hintText: snapshot.hasData
-                                                  ? (snapshot.data.freefireId ??
-                                                      "Enter Free fire Id")
-                                                  : "Enter Free fire Id"),
-                                          enabled: !_status,
-                                        ),
-                                      ),
-                                    ],
-                                  )),
-                              !_status ? _getActionButtons() : new Container(),
+                                    ]),
+                              )
                             ],
                           ),
                         ),
-                      )
-                    ],
+                        new Container(
+                          color: Color(0xffFFFFFF),
+                          child: Padding(
+                            padding: EdgeInsets.only(bottom: 25.0),
+                            child: new Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 25.0, right: 25.0, top: 25.0),
+                                    child: new Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: <Widget>[
+                                        new Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            new Text(
+                                              'Personal Information',
+                                              style: TextStyle(
+                                                  fontSize: 18.0,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
+                                        ),
+                                        new Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            _status
+                                                ? _getEditIcon()
+                                                : new Container(),
+                                          ],
+                                        )
+                                      ],
+                                    )),
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 25.0, right: 25.0, top: 25.0),
+                                    child: new Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: <Widget>[
+                                        new Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            new Text(
+                                              'Name',
+                                              style: TextStyle(
+                                                  fontSize: 16.0,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    )),
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 25.0, right: 25.0, top: 2.0),
+                                    child: new Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: <Widget>[
+                                        new Flexible(
+                                          child: new TextFormField(
+                                            initialValue:
+                                                snapshot.data.name ?? '',
+                                            onSaved: (newValue) {
+                                              _name = newValue ??
+                                                  snapshot.data.name;
+                                            },
+                                            enabled: !_status,
+                                            autofocus: !_status,
+                                          ),
+                                        ),
+                                      ],
+                                    )),
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 25.0, right: 25.0, top: 25.0),
+                                    child: new Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: <Widget>[
+                                        new Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            new Text(
+                                              'Pubg-Id',
+                                              style: TextStyle(
+                                                  fontSize: 16.0,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    )),
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 25.0, right: 25.0, top: 2.0),
+                                    child: new Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: <Widget>[
+                                        new Flexible(
+                                          child: new TextFormField(
+                                            initialValue:
+                                                snapshot.data.pubgId ?? '',
+                                            onSaved: (newValue) {
+                                              _pubg = newValue ??
+                                                  snapshot.data.pubgId;
+                                            },
+                                            enabled: !_status,
+                                          ),
+                                        ),
+                                      ],
+                                    )),
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 25.0, right: 25.0, top: 25.0),
+                                    child: new Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: <Widget>[
+                                        new Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            new Text(
+                                              'Cod-Id',
+                                              style: TextStyle(
+                                                  fontSize: 16.0,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    )),
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 25.0, right: 25.0, top: 2.0),
+                                    child: new Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: <Widget>[
+                                        new Flexible(
+                                          child: new TextFormField(
+                                            initialValue:
+                                                snapshot.data.codId ?? '',
+                                            onSaved: (newValue) {
+                                              _cod = newValue ??
+                                                  snapshot.data.codId;
+                                            },
+                                            enabled: !_status,
+                                          ),
+                                        ),
+                                      ],
+                                    )),
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 25.0, right: 25.0, top: 25.0),
+                                    child: new Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: <Widget>[
+                                        new Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            new Text(
+                                              'Freefire-Id',
+                                              style: TextStyle(
+                                                  fontSize: 16.0,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    )),
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 25.0, right: 25.0, top: 2.0),
+                                    child: new Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: <Widget>[
+                                        new Flexible(
+                                          child: new TextFormField(
+                                            initialValue:
+                                                snapshot.data.freefireId ?? '',
+                                            onSaved: (newValue) {
+                                              _freefire = newValue ??
+                                                  snapshot.data.freefireId;
+                                            },
+                                            enabled: !_status,
+                                          ),
+                                        ),
+                                      ],
+                                    )),
+                                !_status
+                                    ? _getActionButtons()
+                                    : new Container(),
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            );
+                ],
+              );
+            } else if (snapshot.hasError) {
+              return Center(child: Text('OPPS! something happned'));
+            } else {
+              return Center(child: CircularProgressIndicator());
+            }
           }),
     ));
   }
@@ -349,7 +363,9 @@ class MapScreenState extends State<ProfilePage>
                 color: Colors.green,
                 onPressed: () {
                   setState(() {
+                    formKey.currentState.save();
                     _status = true;
+                    _updateProfile(_name, _pubg, _cod, _freefire);
                     FocusScope.of(context).requestFocus(new FocusNode());
                   });
                 },
@@ -401,5 +417,15 @@ class MapScreenState extends State<ProfilePage>
         });
       },
     );
+  }
+
+  _updateProfile(name, pubg, cod, freefire) async {
+    try {
+      await DatabaseService().updateUserProfile(name, pubg, cod, freefire);
+      Toast.show('Profile updated', context);
+      setState(() {});
+    } catch (e) {
+      Toast.show(e.toString(), context);
+    }
   }
 }
