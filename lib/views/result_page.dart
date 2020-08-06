@@ -1,6 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:toast/toast.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:trident/models/match_models.dart';
 import 'package:trident/services/database_services.dart';
 
@@ -67,9 +67,8 @@ class _ResultPageState extends State<ResultPage> {
               child: RaisedButton(
                 color: Colors.red.shade900,
                 colorBrightness: Brightness.light,
-                onPressed: () {
-                  //TODO: Add help function
-                  Toast.show('Help', context);
+                onPressed: () async {
+                  await _sendMail('Results');
                 },
                 child: Text('Help!'),
                 textColor: Colors.white,
@@ -120,5 +119,19 @@ class _ResultPageState extends State<ResultPage> {
         ),
       ),
     );
+  }
+}
+
+Future<void> _sendMail(subject) async {
+  final Email email = Email(
+    subject: 'Subject : ' + subject,
+    // TODO: change recipenits
+    recipients: ['rockssharsh0001@gmail.com'],
+  );
+
+  try {
+    await FlutterEmailSender.send(email);
+  } catch (error) {
+    print(error.toString());
   }
 }

@@ -128,7 +128,6 @@ class _WalletPageState extends State<WalletPage> {
                                   textColor: Colors.white,
                                 ),
                               ),
-                              // TODO: add transcation history table here
                             ],
                           ),
                         ),
@@ -214,7 +213,6 @@ class _WalletPageState extends State<WalletPage> {
                                   textColor: Colors.white,
                                 ),
                               ),
-                              // TODO: add transcation history table here
                             ],
                           ),
                         ),
@@ -407,12 +405,9 @@ Future<void> _sendMail(subject) async {
     recipients: ['rockssharsh0001@gmail.com'],
   );
 
-  String platformResponse;
-
   try {
     await FlutterEmailSender.send(email);
-    platformResponse = 'success';
   } catch (error) {
-    platformResponse = error.toString();
+    print(error.toString());
   }
 }

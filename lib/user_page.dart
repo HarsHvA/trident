@@ -130,13 +130,10 @@ class _UserPageState extends State<UserPage> {
       recipients: ['rockssharsh0001@gmail.com'],
     );
 
-    String platformResponse;
-
     try {
       await FlutterEmailSender.send(email);
-      platformResponse = 'success';
     } catch (error) {
-      platformResponse = error.toString();
+      print(error.toString());
     }
   }
 }

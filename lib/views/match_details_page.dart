@@ -288,8 +288,8 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                       TableCellVerticalAlignment.middle,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Text(snapshot.data.description ??
-                                        ''), //TODO: add description
+                                    child:
+                                        Text(snapshot.data.description ?? ''),
                                   ),
                                 )
                               ]),
