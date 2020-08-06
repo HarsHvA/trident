@@ -61,7 +61,6 @@ class _WalletPageState extends State<WalletPage> {
           ),
         ),
         body: FutureBuilder<User>(
-            initialData: User(),
             future: DatabaseService().getUserInformation(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
@@ -221,7 +220,7 @@ class _WalletPageState extends State<WalletPage> {
                   ),
                 );
               } else {
-                return Center(child: Text("Loading..."));
+                return Center(child: CircularProgressIndicator());
               }
             }),
       ),
@@ -322,6 +321,8 @@ class _WalletPageState extends State<WalletPage> {
     CollectionReference userCollection = Firestore.instance.collection('users');
     try {
       if (walletMoney > 20) {
+        await DatabaseService().addWithdrawlrequest(
+            walletMoney, FieldValue.serverTimestamp(), _mode, _mobileNumber);
         await DatabaseService().sendWithdrawlrequest(
             walletMoney, FieldValue.serverTimestamp(), _mode, _mobileNumber);
         await Firestore.instance.runTransaction((transaction) async {
@@ -341,6 +342,7 @@ class _WalletPageState extends State<WalletPage> {
       }
     } catch (e) {
       pr.hide();
+      Navigator.pop(context);
       // Toast.show(e.toString(), context);
       _error = e.toString();
     }

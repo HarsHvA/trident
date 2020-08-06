@@ -24,11 +24,11 @@ class DatabaseService {
   final CollectionReference resultsCollection =
       Firestore.instance.collection('results');
 
-  final CollectionReference pendingTransactionCollection =
+  final CollectionReference transactionCollection =
       Firestore.instance.collection('transaction');
 
-  final CollectionReference completedTransactionCollection =
-      Firestore.instance.collection('completedTransaction');
+  final CollectionReference pendingTransactionCollection =
+      Firestore.instance.collection('pendingTransaction');
 
   Future updateUserData(String name, String email, int wallet, int gems) async {
     return await usersCollection.document(uid).setData(
@@ -110,7 +110,7 @@ class DatabaseService {
 
   Future sendWithdrawlrequest(amount, time, mode, mobileNo) async {
     String userId = await AuthService().uID();
-    await pendingTransactionCollection.document(userId).setData({
+    await transactionCollection.document(userId).setData({
       'transactions': FieldValue.arrayUnion([
         {
           'uid': userId,
@@ -121,6 +121,17 @@ class DatabaseService {
         }
       ])
     }, merge: true);
+  }
+
+  Future addWithdrawlrequest(amount, time, mode, mobileNo) async {
+    String userId = await AuthService().uID();
+    await pendingTransactionCollection.add({
+      'uid': userId,
+      'status': 'pending',
+      'amount': amount,
+      'mode': mode,
+      'mobileNo': mobileNo
+    });
   }
 
   Future addToSubscribedGames(
@@ -224,10 +235,7 @@ class DatabaseService {
   }
 
   Stream<List<UserTransactions>> getUserPendingTransaction(userId) {
-    return pendingTransactionCollection
-        .document(userId)
-        .snapshots()
-        .map((event) {
+    return transactionCollection.document(userId).snapshots().map((event) {
       List<UserTransactions> transactionList = [];
       List list = event.data['transactions'];
       for (var i = 0; i < list.length; i++) {
@@ -244,10 +252,7 @@ class DatabaseService {
   }
 
   Stream<List<UserTransactions>> getUserCompletedTransaction(userId) {
-    return completedTransactionCollection
-        .document(userId)
-        .snapshots()
-        .map((event) {
+    return transactionCollection.document(userId).snapshots().map((event) {
       List<UserTransactions> transactionList = [];
       List list = event.data['transactions'];
       for (var i = 0; i < list.length; i++) {
