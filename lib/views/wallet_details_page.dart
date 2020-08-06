@@ -256,9 +256,10 @@ class _WalletPageState extends State<WalletPage> {
                           child: RaisedButton(
                             color: Colors.black,
                             colorBrightness: Brightness.light,
-                            onPressed: () {
+                            onPressed: () async {
                               formKey.currentState.save();
-                              _sendUserWithdrawlRequest(walletMoney);
+                              await _sendUserWithdrawlRequest(walletMoney);
+                              setState(() {});
                             },
                             child: Text('Send request'),
                             textColor: Colors.white,

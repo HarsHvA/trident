@@ -110,17 +110,17 @@ class DatabaseService {
 
   Future sendWithdrawlrequest(amount, time, mode, mobileNo) async {
     String userId = await AuthService().uID();
-    await transactionCollection.document(userId).setData({
-      'transactions': FieldValue.arrayUnion([
-        {
-          'uid': userId,
-          'status': 'pending',
-          'amount': amount,
-          'mode': mode,
-          'mobileNo': mobileNo
-        }
-      ])
-    }, merge: true);
+    CollectionReference userTransactionCollection = Firestore.instance
+        .collection('users')
+        .document(userId)
+        .collection('transactions');
+    await userTransactionCollection.add({
+      'uid': userId,
+      'status': 'pending',
+      'amount': amount,
+      'mode': mode,
+      'mobileNo': mobileNo
+    });
   }
 
   Future addWithdrawlrequest(amount, time, mode, mobileNo) async {
@@ -235,36 +235,38 @@ class DatabaseService {
   }
 
   Stream<List<UserTransactions>> getUserPendingTransaction(userId) {
-    return transactionCollection.document(userId).snapshots().map((event) {
-      List<UserTransactions> transactionList = [];
-      List list = event.data['transactions'];
-      for (var i = 0; i < list.length; i++) {
-        if (list[i]['status'] == 'pending') {
-          transactionList.add(new UserTransactions(
-              mode: list[i]['mode'],
-              amount: list[i]['amount'].toString(),
-              mobileNo: list[i]['mobileNo'].toString()));
-        }
-      }
-      // print(transactionList);
-      return transactionList.isNotEmpty ? transactionList : null;
+    CollectionReference userTransactionCollection = Firestore.instance
+        .collection('users')
+        .document(userId)
+        .collection('transactions');
+    return userTransactionCollection
+        .where('status', isEqualTo: 'pending')
+        .snapshots()
+        .map((event) {
+      return event.documents.map((e) {
+        return UserTransactions(
+            mode: e.data['mode'] ?? '',
+            amount: e.data['amount'].toString() ?? '',
+            mobileNo: e.data['mobileNo'].toString() ?? '');
+      }).toList();
     });
   }
 
   Stream<List<UserTransactions>> getUserCompletedTransaction(userId) {
-    return transactionCollection.document(userId).snapshots().map((event) {
-      List<UserTransactions> transactionList = [];
-      List list = event.data['transactions'];
-      for (var i = 0; i < list.length; i++) {
-        if (list[i]['status'] == 'completed') {
-          transactionList.add(new UserTransactions(
-              mode: list[i]['mode'],
-              amount: list[i]['amount'].toString(),
-              mobileNo: list[i]['mobileNo'].toString()));
-        }
-      }
-      // print(transactionList);
-      return transactionList.isNotEmpty ? transactionList : null;
+    CollectionReference userTransactionCollection = Firestore.instance
+        .collection('users')
+        .document(userId)
+        .collection('transactions');
+    return userTransactionCollection
+        .where('status', isEqualTo: 'completed')
+        .snapshots()
+        .map((event) {
+      return event.documents.map((e) {
+        return UserTransactions(
+            mode: e.data['mode'] ?? '',
+            amount: e.data['amount'].toString() ?? '',
+            mobileNo: e.data['mobileNo'].toString() ?? '');
+      }).toList();
     });
   }
 
