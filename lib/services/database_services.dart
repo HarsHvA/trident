@@ -325,13 +325,7 @@ class DatabaseService {
   Stream<List<Matches>> get ongoingMatches {
     return matchesCollection
         .where('status', isEqualTo: 'Live')
-        .snapshots()
-        .map(_matchListFromSnapShot);
-  }
-
-  Stream<List<Matches>> get allMatches {
-    return matchesCollection
-        .orderBy('time', descending: true)
+        .orderBy('time', descending: false)
         .snapshots()
         .map(_matchListFromSnapShot);
   }
@@ -341,7 +335,10 @@ class DatabaseService {
         .collection('users')
         .document(userId)
         .collection('subscribedGames');
-    return subscribedMatchesCollection.snapshots().map((event) {
+    return subscribedMatchesCollection
+        .orderBy('time', descending: true)
+        .snapshots()
+        .map((event) {
       return event.documents.map((e) {
         return Matches(
             game: e.data['game'] ?? '',
@@ -365,6 +362,7 @@ class DatabaseService {
   Stream<List<Matches>> get upcomingMatches {
     return matchesCollection
         .where('status', isEqualTo: 'Upcoming')
+        .orderBy('time', descending: false)
         .snapshots()
         .map(_matchListFromSnapShot);
   }

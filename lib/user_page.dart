@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
-import 'package:toast/toast.dart';
 import 'package:trident/openingPage.dart';
 import 'package:trident/top_bar.dart';
 import 'package:trident/views/profile_page.dart';
