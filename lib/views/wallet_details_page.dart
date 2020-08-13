@@ -405,7 +405,7 @@ Future<void> _sendMail(subject) async {
   final Email email = Email(
     subject: 'Subject : ' + subject,
     // TODO: change recipenits
-    recipients: ['rockssharsh0001@gmail.com'],
+    recipients: ['help.iceagestud@gmail.com'],
   );
 
   try {

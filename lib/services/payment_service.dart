@@ -26,7 +26,7 @@ class PaymentService {
       "allow_repeated_payments": "true",
       "send_email": "false",
       "send_sms": "false",
-      "redirect_url": "https://www.iceagedev.com/blank",
+      "redirect_url": "https://www.iceagedev.com/redirect",
     };
     var resp = await http.post(
         Uri.encodeFull("https://www.instamojo.com/api/1.1/payment-requests/"),

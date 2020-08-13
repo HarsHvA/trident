@@ -103,7 +103,7 @@ class _UserPageState extends State<UserPage> {
             break;
 
           case 2:
-            Toast.show(label, context);
+            _sendMail('General Help');
             break;
           case 3:
             _sendMail('Feedback');
@@ -127,7 +127,7 @@ class _UserPageState extends State<UserPage> {
     final Email email = Email(
       subject: 'Subject : ' + subject,
       // TODO: change recipenits
-      recipients: ['rockssharsh0001@gmail.com'],
+      recipients: ['help.iceagestud@gmail.com'],
     );
 
     try {
