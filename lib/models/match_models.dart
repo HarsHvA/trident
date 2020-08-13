@@ -17,6 +17,7 @@ class Matches {
   String roomId;
   String roomPassword;
   String description;
+  int noOfGroups;
 
   Matches(
       {this.game,
@@ -34,7 +35,8 @@ class Matches {
       this.resultOut,
       this.roomId,
       this.roomPassword,
-      this.description});
+      this.description,
+      this.noOfGroups});
 }
 
 class Results {
@@ -43,4 +45,13 @@ class Results {
   String reward;
 
   Results({this.gameId, this.kills, this.reward});
+}
+
+class RoomDetailsModel {
+  String roomId;
+  String roomPassword;
+  Timestamp time;
+  String id;
+
+  RoomDetailsModel({this.roomId, this.roomPassword, this.time, this.id});
 }

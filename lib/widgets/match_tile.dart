@@ -322,7 +322,7 @@ class MatchTile extends StatelessWidget {
     await DatabaseService().getUserData(matches.game).then((value) {
       gameName = value.gameName;
     });
-    if (gameName != null) {
+    if (gameName != null && gameName.isNotEmpty) {
       Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(
           builder: (context) => MatchesDetailsPage(
                 matchId: matches.id,

@@ -18,6 +18,9 @@ class DatabaseService {
   final CollectionReference participantsCollection =
       Firestore.instance.collection('participants');
 
+  final CollectionReference participantsGroupCollection =
+      Firestore.instance.collection('participantsGroup');
+
   final CollectionReference userMatchHistoryCollection =
       Firestore.instance.collection('userMatchHistory');
 
@@ -29,6 +32,9 @@ class DatabaseService {
 
   final CollectionReference pendingTransactionCollection =
       Firestore.instance.collection('pendingTransaction');
+
+  final CollectionReference groupCollection =
+      Firestore.instance.collection('group');
 
   Future updateUserData(String name, String email, int wallet, int gems) async {
     return await usersCollection.document(uid).setData(
@@ -69,6 +75,21 @@ class DatabaseService {
     }, merge: true);
   }
 
+  Future addToParticipantsGroup(matchId, gameName, name, game, groupId) async {
+    String userId = await AuthService().uID();
+    return await participantsGroupCollection.document(matchId).setData({
+      groupId: FieldValue.arrayUnion([
+        {
+          'name': name,
+          'gameName': gameName,
+          'uid': userId,
+          'matchId': matchId,
+          'game': game,
+        }
+      ])
+    }, merge: true);
+  }
+
   Future addCoinsToWallet(newGems) async {
     String userId = await AuthService().uID();
     int gems = await usersCollection.document(userId).get().then((value) {
@@ -88,7 +109,7 @@ class DatabaseService {
         Firestore.instance.collection('userMatchTokens');
 
     await userMatchTokens.document(matchId).get().then((value) {
-      joined = value.data[userId] ?? false;
+      joined = value.data[userId]['joined'] ?? false;
     });
 
     if (joined) {
@@ -98,14 +119,35 @@ class DatabaseService {
     }
   }
 
-  Future generateUserMatchToken(matchId) async {
+  Future<int> getGroupId(matchId) async {
+    int groupCode;
     String userId = await AuthService().uID();
     CollectionReference userMatchTokens =
         Firestore.instance.collection('userMatchTokens');
 
-    await userMatchTokens
-        .document(matchId)
-        .setData({userId: true}, merge: true);
+    await userMatchTokens.document(matchId).get().then((value) {
+      groupCode = value.data[userId]['groupId'] ?? null;
+    });
+    return groupCode;
+  }
+
+  Future<int> getGroupLength(matchId, groupId) async {
+    int length = 0;
+    await participantsGroupCollection.document(matchId).get().then((value) {
+      List list = value.data[groupId];
+      length = list.length ?? 0;
+    });
+    return length;
+  }
+
+  Future generateUserMatchToken(matchId, id) async {
+    String userId = await AuthService().uID();
+    CollectionReference userMatchTokens =
+        Firestore.instance.collection('userMatchTokens');
+
+    await userMatchTokens.document(matchId).setData({
+      userId: {'joined': true, 'groupId': id}
+    }, merge: true);
   }
 
   Future sendWithdrawlrequest(amount, time, mode, mobileNo) async {
@@ -204,6 +246,16 @@ class DatabaseService {
             reward: list[i]['moneyWon']));
       }
       return result;
+    });
+  }
+
+  Stream<RoomDetailsModel> getRoomDetails(matchId, id) {
+    return groupCollection.document(matchId).snapshots().map((event) {
+      return RoomDetailsModel(
+          roomId: event.data[id]['roomId'] ?? '',
+          id: event.data[id]['id'] ?? '',
+          roomPassword: event.data[id]['roomPassword'] ?? '',
+          time: event.data[id]['time']);
     });
   }
 
@@ -334,7 +386,8 @@ class DatabaseService {
           id: value.documentID,
           roomId: value.data['roomId'],
           roomPassword: value.data['roomPassword'],
-          description: value.data['description']);
+          description: value.data['description'],
+          noOfGroups: value.data['noOfGroups'] ?? 0);
     });
   }
 

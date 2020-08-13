@@ -9,6 +9,7 @@ import 'package:trident/models/participant_models.dart';
 import 'package:trident/services/auth_service.dart';
 import 'package:trident/services/database_services.dart';
 import 'package:trident/views/buy_coin.dart';
+import 'package:trident/views/join_group_page.dart';
 import 'package:trident/views/result_page.dart';
 
 class MatchesDetailsPage extends StatefulWidget {
@@ -311,64 +312,73 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                         color: Colors.green,
                                         colorBrightness: Brightness.light,
                                         onPressed: () async {
-                                          if (snapshot.data.status
-                                                  .toLowerCase() ==
-                                              'upcoming') {
-                                            pr.show();
-                                            bool joined = false;
-                                            try {
-                                              joined = await DatabaseService()
-                                                  .checkMatchJoined(matchId);
-                                            } catch (e) {
-                                              print(e);
-                                            }
-                                            if (joined) {
-                                              pr.hide();
-                                              Toast.show(
-                                                  'You have already joined the match',
-                                                  context);
-                                            } else {
-                                              if (snap.hasData) {
-                                                if (snap.data <
-                                                    snapshot
-                                                        .data.maxParticipants) {
-                                                  _getGemsToPlay(
-                                                      snapshot.data.ticket,
-                                                      matchId,
-                                                      snapshot.data.game,
-                                                      snapshot.data.name,
-                                                      snapshot.data.ticket,
-                                                      snapshot.data.status,
-                                                      snapshot.data.imageUrl,
-                                                      snapshot.data.map,
-                                                      snapshot.data.matchNo,
-                                                      snapshot
-                                                          .data.maxParticipants,
-                                                      snapshot.data.perKill,
-                                                      snapshot.data.prizePool,
-                                                      snapshot.data.time,
-                                                      snapshot.data.roomId,
-                                                      snapshot
-                                                          .data.roomPassword);
+                                          if (snapshot.data.noOfGroups > 0) {
+                                            if (snapshot.data.status
+                                                    .toLowerCase() ==
+                                                'upcoming') {
+                                              pr.show();
+                                              bool joined = false;
+                                              try {
+                                                joined = await DatabaseService()
+                                                    .checkMatchJoined(matchId);
+                                              } catch (e) {
+                                                print(e);
+                                              }
+                                              if (joined) {
+                                                pr.hide();
+                                                Toast.show(
+                                                    'You have already joined the match',
+                                                    context);
+                                              } else {
+                                                if (snap.hasData) {
+                                                  if (snap.data <
+                                                      snapshot.data
+                                                          .maxParticipants) {
+                                                    _getGemsToPlay(
+                                                        snapshot.data.ticket,
+                                                        matchId,
+                                                        snapshot.data.game,
+                                                        snapshot.data.name,
+                                                        snapshot.data.ticket,
+                                                        snapshot.data.status,
+                                                        snapshot.data.imageUrl,
+                                                        snapshot.data.map,
+                                                        snapshot.data.matchNo,
+                                                        snapshot.data
+                                                            .maxParticipants,
+                                                        snapshot.data.perKill,
+                                                        snapshot.data.prizePool,
+                                                        snapshot.data.time,
+                                                        snapshot.data.roomId,
+                                                        snapshot
+                                                            .data.roomPassword,
+                                                        snapshot
+                                                            .data.noOfGroups);
+                                                  } else {
+                                                    pr.hide();
+                                                    Toast.show(
+                                                        'Match full', context);
+                                                  }
                                                 } else {
                                                   pr.hide();
                                                   Toast.show(
-                                                      'Match full', context);
+                                                      'OPPS! something happned',
+                                                      context);
                                                 }
-                                              } else {
-                                                pr.hide();
-                                                Toast.show(
-                                                    'OPPS! something happned',
-                                                    context);
                                               }
+                                            } else {
+                                              Navigator.of(context,
+                                                      rootNavigator: true)
+                                                  .push(MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ResultPage(
+                                                              matchId:
+                                                                  matchId)));
                                             }
                                           } else {
-                                            Navigator.of(context,
-                                                    rootNavigator: true)
-                                                .push(MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ResultPage(
-                                                            matchId: matchId)));
+                                            Toast.show(
+                                                'OPPS! something happned',
+                                                context);
                                           }
                                         },
                                         child: (snapshot.data.status
@@ -572,21 +582,46 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                             ],
                           ),
                         ),
-                        Container(
-                          child: Column(
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: SelectableText('RoomId : ' + roomId),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: SelectableText(
-                                    'Password : ' + roomPassword),
-                              ),
-                            ],
-                          ),
-                        ),
+                        FutureBuilder<int>(
+                            future: DatabaseService().getGroupId(matchId),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                return StreamBuilder<RoomDetailsModel>(
+                                    stream: DatabaseService().getRoomDetails(
+                                        matchId, snapshot.data.toString()),
+                                    builder: (context, snap) {
+                                      if (snap.hasData) {
+                                        return Container(
+                                          child: Column(
+                                            children: <Widget>[
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: SelectableText(
+                                                    'RoomId : ' +
+                                                            snap.data.roomId ??
+                                                        ''),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: SelectableText(
+                                                    'Password : ' +
+                                                            snap.data
+                                                                .roomPassword ??
+                                                        ''),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      } else {
+                                        return CircularProgressIndicator();
+                                      }
+                                    });
+                              } else {
+                                return CircularProgressIndicator();
+                              }
+                            }),
                       ],
                     ),
                   ),
@@ -624,7 +659,8 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
       prizePool,
       time,
       roomId,
-      roomPassword) async {
+      roomPassword,
+      noOfGroups) async {
     pr.show();
     try {
       await DatabaseService().getUserData(game).then((value) async {
@@ -647,9 +683,15 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
         roomId,
         roomPassword,
       );
-      await DatabaseService().generateUserMatchToken(matchId);
-      Toast.show('Match Joined', context);
       pr.hide();
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => JoinGroupPage(
+                    matchId: matchId,
+                    noOfGroups: noOfGroups,
+                    game: game,
+                  )));
     } catch (e) {
       Toast.show(e.toString(), context);
       print(e.toString());
@@ -672,7 +714,8 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
       prizePool,
       time,
       roomId,
-      roomPassword) async {
+      roomPassword,
+      noOfGroups) async {
     String userId = await AuthService().uID();
     CollectionReference usersCollection =
         Firestore.instance.collection('users');
@@ -705,7 +748,8 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
           prizePool,
           time,
           roomId,
-          roomPassword);
+          roomPassword,
+          noOfGroups);
     }
   }
 }
