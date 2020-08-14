@@ -6,21 +6,24 @@ import 'package:trident/services/database_services.dart';
 
 class ResultPage extends StatefulWidget {
   final String matchId;
-  ResultPage({Key key, @required this.matchId}) : super(key: key);
+  final int groupNo;
+  ResultPage({Key key, @required this.matchId, @required this.groupNo})
+      : super(key: key);
   @override
-  _ResultPageState createState() => _ResultPageState(matchId);
+  _ResultPageState createState() => _ResultPageState(matchId, groupNo);
 }
 
 class _ResultPageState extends State<ResultPage> {
   String matchId;
-  _ResultPageState(this.matchId);
+  int groupNo;
+  _ResultPageState(this.matchId, this.groupNo);
   @override
   Widget build(BuildContext context) {
     double unitHeightValue = MediaQuery.of(context).size.height * 0.01;
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Results',
+          'Group $groupNo Results',
           style: TextStyle(color: Colors.white),
         ),
         elevation: 0,
@@ -68,7 +71,7 @@ class _ResultPageState extends State<ResultPage> {
                 color: Colors.red.shade900,
                 colorBrightness: Brightness.light,
                 onPressed: () async {
-                  await _sendMail('Results');
+                  await _sendMail('Results Group $groupNo ');
                 },
                 child: Text('Help!'),
                 textColor: Colors.white,
@@ -76,7 +79,7 @@ class _ResultPageState extends State<ResultPage> {
             ),
             SingleChildScrollView(
               child: StreamBuilder<List<Results>>(
-                  stream: DatabaseService().result(matchId),
+                  stream: DatabaseService().result(matchId, groupNo.toString()),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       return Container(
@@ -103,8 +106,9 @@ class _ResultPageState extends State<ResultPage> {
                               rows: snapshot.data
                                   .map((e) => DataRow(cells: <DataCell>[
                                         DataCell(Text(e.gameId)),
-                                        DataCell(Text(e.kills)),
-                                        DataCell(Text('\u20B9 ' + e.reward)),
+                                        DataCell(Text(e.kills.toString())),
+                                        DataCell(Text(
+                                            '\u20B9 ' + e.reward.toString())),
                                       ]))
                                   .toList()));
                     } else {

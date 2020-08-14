@@ -9,8 +9,8 @@ import 'package:trident/models/participant_models.dart';
 import 'package:trident/services/auth_service.dart';
 import 'package:trident/services/database_services.dart';
 import 'package:trident/views/buy_coin.dart';
+import 'package:trident/views/group_result_view.dart';
 import 'package:trident/views/join_group_page.dart';
-import 'package:trident/views/result_page.dart';
 
 class MatchesDetailsPage extends StatefulWidget {
   final String matchId;
@@ -371,9 +371,12 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                                       rootNavigator: true)
                                                   .push(MaterialPageRoute(
                                                       builder: (context) =>
-                                                          ResultPage(
-                                                              matchId:
-                                                                  matchId)));
+                                                          GroupResults(
+                                                            matchId: matchId,
+                                                            noOfgroups: snapshot
+                                                                .data
+                                                                .noOfGroups,
+                                                          )));
                                             }
                                           } else {
                                             Toast.show(
@@ -549,6 +552,8 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
   }
 
   void _showRoomdetailDialog(roomId, roomPassword) {
+    double unitHeightValue = MediaQuery.of(context).size.height * 0.01;
+    double unitWidthValue = MediaQuery.of(context).size.width * 0.01;
     showModalBottomSheet(
       enableDrag: false,
       context: context,
@@ -597,19 +602,133 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                               Padding(
                                                 padding:
                                                     const EdgeInsets.all(8.0),
-                                                child: SelectableText(
-                                                    'RoomId : ' +
-                                                            snap.data.roomId ??
-                                                        ''),
-                                              ),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: SelectableText(
-                                                    'Password : ' +
-                                                            snap.data
-                                                                .roomPassword ??
-                                                        ''),
+                                                child: Table(
+                                                  defaultColumnWidth:
+                                                      FixedColumnWidth(
+                                                          unitWidthValue * 33),
+                                                  border: TableBorder.all(
+                                                      color: Colors.black26,
+                                                      width: 1,
+                                                      style: BorderStyle.solid),
+                                                  children: [
+                                                    TableRow(children: [
+                                                      TableCell(
+                                                          verticalAlignment:
+                                                              TableCellVerticalAlignment
+                                                                  .middle,
+                                                          child: Center(
+                                                              child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(2.0),
+                                                            child: SizedBox(
+                                                              height:
+                                                                  unitHeightValue *
+                                                                      2.5,
+                                                              child: Center(
+                                                                  child: Text(
+                                                                      'Group')),
+                                                            ),
+                                                          ))),
+                                                      TableCell(
+                                                          verticalAlignment:
+                                                              TableCellVerticalAlignment
+                                                                  .fill,
+                                                          child: Center(
+                                                              child: Text(snapshot
+                                                                  .data
+                                                                  .toString())))
+                                                    ]),
+                                                    TableRow(children: [
+                                                      TableCell(
+                                                          verticalAlignment:
+                                                              TableCellVerticalAlignment
+                                                                  .middle,
+                                                          child: Center(
+                                                              child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(2.0),
+                                                            child: SizedBox(
+                                                              height:
+                                                                  unitHeightValue *
+                                                                      2.5,
+                                                              child: Center(
+                                                                  child: Text(
+                                                                      'Time')),
+                                                            ),
+                                                          ))),
+                                                      TableCell(
+                                                          verticalAlignment:
+                                                              TableCellVerticalAlignment
+                                                                  .fill,
+                                                          child: Center(
+                                                              child: Text(
+                                                                  _gameTime(snap
+                                                                      .data.time
+                                                                      .toDate()))))
+                                                    ]),
+                                                    TableRow(children: [
+                                                      TableCell(
+                                                          verticalAlignment:
+                                                              TableCellVerticalAlignment
+                                                                  .middle,
+                                                          child: Center(
+                                                              child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(2.0),
+                                                            child: SizedBox(
+                                                              height:
+                                                                  unitHeightValue *
+                                                                      2.5,
+                                                              child: Center(
+                                                                  child: Text(
+                                                                      'Room id')),
+                                                            ),
+                                                          ))),
+                                                      TableCell(
+                                                          verticalAlignment:
+                                                              TableCellVerticalAlignment
+                                                                  .fill,
+                                                          child: Center(
+                                                            child: SelectableText(
+                                                                snap.data
+                                                                        .roomId ??
+                                                                    'NA'),
+                                                          ))
+                                                    ]),
+                                                    TableRow(children: [
+                                                      TableCell(
+                                                          verticalAlignment:
+                                                              TableCellVerticalAlignment
+                                                                  .middle,
+                                                          child: Center(
+                                                              child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(2.0),
+                                                            child: SizedBox(
+                                                              height:
+                                                                  unitHeightValue *
+                                                                      2.5,
+                                                              child: Center(
+                                                                  child: Text(
+                                                                      'Room password')),
+                                                            ),
+                                                          ))),
+                                                      TableCell(
+                                                          verticalAlignment:
+                                                              TableCellVerticalAlignment
+                                                                  .fill,
+                                                          child: Center(
+                                                              child: SelectableText(snap
+                                                                      .data
+                                                                      .roomPassword ??
+                                                                  'NA')))
+                                                    ]),
+                                                  ],
+                                                ),
                                               ),
                                             ],
                                           ),

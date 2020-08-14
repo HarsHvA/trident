@@ -204,7 +204,7 @@ class _JoinGroupPageState extends State<JoinGroupPage> {
                         ),
                       );
                     } else {
-                      return CircularProgressIndicator();
+                      return Container();
                     }
                   });
             }),

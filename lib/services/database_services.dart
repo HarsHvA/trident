@@ -234,16 +234,16 @@ class DatabaseService {
     }).toList();
   }
 
-  Stream<List<Results>> result(matchId) {
+  Stream<List<Results>> result(matchId, groupNo) {
     // print(matchId);
     return resultsCollection.document(matchId).snapshots().map((event) {
       List<Results> result = [];
-      List list = event.data['results'];
+      List list = event.data[groupNo];
       for (var i = 0; i < list.length; i++) {
-        result.add(new Results(
-            gameId: list[i]['playerId'],
-            kills: list[i]['kills'],
-            reward: list[i]['moneyWon']));
+        result.add(Results(
+            gameId: list[i]['gameId'],
+            kills: list[i]['kills'].toString(),
+            reward: list[i]['reward'].toString()));
       }
       return result;
     });
