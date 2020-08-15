@@ -32,7 +32,7 @@ class _PaymentPageState extends State<PaymentPage> {
     webViewPlugin.close();
     if (mounted) {
       webViewPlugin.onUrlChanged.listen((String url) async {
-        if (url.contains('https://www.iceagedev.com/blank')) {
+        if (url.contains('https://www.iceagedev.com/redirect')) {
           Uri uri = Uri.parse(url);
           String paymentRequestId = uri.queryParameters['payment_id'];
           // print('paymentId: ' + paymentRequestId);

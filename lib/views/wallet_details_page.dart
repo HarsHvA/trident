@@ -395,7 +395,7 @@ class _WalletPageState extends State<WalletPage> {
 
 _getHints(label) {
   if (label == 'Mode') {
-    return 'Paytm/PhonePay';
+    return 'Paytm/PhonePe';
   } else {
     return 'Mobile no';
   }
@@ -404,7 +404,6 @@ _getHints(label) {
 Future<void> _sendMail(subject) async {
   final Email email = Email(
     subject: 'Subject : ' + subject,
-    // TODO: change recipenits
     recipients: ['help.iceagestud@gmail.com'],
   );
 

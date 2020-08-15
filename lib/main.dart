@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:trident/openingPage.dart';
@@ -8,6 +9,7 @@ import 'package:trident/views/splashScreen.dart';
 import 'package:trident/widgets/provider_widget.dart';
 
 void main() {
+  final FirebaseAnalytics analytics = FirebaseAnalytics();
   runApp(MyApp());
 }
 

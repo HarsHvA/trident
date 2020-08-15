@@ -53,8 +53,10 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
         stream: DatabaseService().getMatchDetails(matchId),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
-            return Center(
-              child: Text('Loading...'),
+            return Scaffold(
+              body: Center(
+                child: Text('Loading...'),
+              ),
             );
           else {
             return SafeArea(
@@ -754,14 +756,14 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
   }
 
   _shareMatchDetails(game, time, prize) {
-    // TODO: Add your game installation link here
     Share.share(game +
         ' Tournament on ' +
         time +
         ' with ' +
         '\u20B9' +
         prize +
-        ' Prize pool exclusively on | Trident Gaming | download link: ');
+        ' Prize pool exclusively on | Trident Gaming | download link: ' +
+        'https://www.iceagedev.com/download');
   }
 
   _addUserAsParticipants(

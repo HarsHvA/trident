@@ -129,7 +129,6 @@ class _ResultPageState extends State<ResultPage> {
 Future<void> _sendMail(subject) async {
   final Email email = Email(
     subject: 'Subject : ' + subject,
-    // TODO: change recipenits
     recipients: ['help.iceagestud@gmail.com'],
   );
 
