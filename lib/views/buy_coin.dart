@@ -1,9 +1,10 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:toast/toast.dart';
 import 'package:trident/models/user_model.dart';
 import 'package:trident/services/database_services.dart';
-import 'package:trident/views/payment_view.dart';
 
 class BuyCoinPage extends StatefulWidget with WidgetsBindingObserver {
   @override
@@ -12,6 +13,59 @@ class BuyCoinPage extends StatefulWidget with WidgetsBindingObserver {
 
 class _BuyCoinPageState extends State<BuyCoinPage> {
   ProgressDialog pr;
+  Razorpay razorpay;
+  int _amount;
+
+  @override
+  void initState() {
+    super.initState();
+
+    razorpay = new Razorpay();
+
+    razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlerPaymentSuccess);
+    razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlerErrorFailure);
+    razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handlerExternalWallet);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    razorpay.clear();
+  }
+
+  void openCheckout(amount, email) {
+    var options = {
+      "key": "rzp_test_uTziJ6ZTY4fdkz",
+      "amount": amount * 100,
+      "name": "Lynx Gaming",
+      "description": "Payment for buying gems",
+      "prefill": {"email": email},
+      "external": {
+        "wallets": ["paytm"]
+      }
+    };
+
+    try {
+      razorpay.open(options);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  void _handlerPaymentSuccess(PaymentSuccessResponse response) {
+    print(response);
+    Toast.show("Payment success", context);
+  }
+
+  void _handlerErrorFailure(PaymentFailureResponse response) {
+    print(response.message);
+    Toast.show(response.message, context);
+  }
+
+  void _handlerExternalWallet(ExternalWalletResponse response) {
+    print(response);
+  }
+
   @override
   Widget build(BuildContext context) {
     double unitHeightValue = MediaQuery.of(context).size.height * 0.01;
@@ -635,14 +689,8 @@ class _BuyCoinPageState extends State<BuyCoinPage> {
     try {
       User user = await DatabaseService().getUserInformation();
       pr.hide();
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => PaymentPage(
-                  amount: gems.toString(),
-                  purpose: 'Trident tournament',
-                  name: user.name,
-                  email: user.email)));
+      _amount = gems;
+      openCheckout(gems, user.email);
     } catch (e) {
       pr.hide();
       print(e.toString());

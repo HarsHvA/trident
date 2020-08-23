@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:toast/toast.dart';
 import 'package:trident/models/user_model.dart';
 import 'package:trident/services/database_services.dart';
@@ -15,6 +16,7 @@ class MapScreenState extends State<ProfilePage>
   final FocusNode myFocusNode = FocusNode();
   final formKey = GlobalKey<FormState>();
   String _name, _pubg, _cod, _freefire;
+  ProgressDialog pr;
   @override
   void initState() {
     super.initState();
@@ -22,6 +24,23 @@ class MapScreenState extends State<ProfilePage>
 
   @override
   Widget build(BuildContext context) {
+    pr = ProgressDialog(context,
+        type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
+    pr.style(
+      message: "Please wait...",
+      borderRadius: 5.0,
+      padding: EdgeInsets.all(25),
+      backgroundColor: Colors.white,
+      progressWidget: CircularProgressIndicator(
+        valueColor: new AlwaysStoppedAnimation<Color>(Colors.blue),
+      ),
+      elevation: 10.0,
+      insetAnimCurve: Curves.easeInOut,
+      progressTextStyle: TextStyle(
+          color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
+      messageTextStyle: TextStyle(
+          color: Colors.black, fontSize: 12.0, fontWeight: FontWeight.w600),
+    );
     return new Scaffold(
         body: new Container(
       color: Colors.white,
@@ -420,11 +439,14 @@ class MapScreenState extends State<ProfilePage>
   }
 
   _updateProfile(name, pubg, cod, freefire) async {
+    pr.show();
     try {
       await DatabaseService().updateUserProfile(name, pubg, cod, freefire);
       Toast.show('Profile updated', context);
+      pr.hide();
       setState(() {});
     } catch (e) {
+      pr.hide();
       Toast.show(e.toString(), context);
     }
   }

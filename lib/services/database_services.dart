@@ -37,8 +37,9 @@ class DatabaseService {
       Firestore.instance.collection('group');
 
   Future updateUserData(String name, String email, int wallet, int gems) async {
-    return await usersCollection.document(uid).setData(
-        {'name': name, 'email': email, 'walletAmount': wallet, 'gems': 0});
+    return await usersCollection
+        .document(uid)
+        .setData({'name': name, 'email': email, 'walletAmount': 0, 'gems': 0});
   }
 
   Future updateUserProfile(
