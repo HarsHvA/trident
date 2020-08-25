@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:trident/models/match_models.dart';
 import 'package:trident/models/participant_models.dart';
 import 'package:trident/models/transaction_models.dart';
@@ -37,58 +38,71 @@ class DatabaseService {
       Firestore.instance.collection('group');
 
   Future updateUserData(String name, String email, int wallet, int gems) async {
-    return await usersCollection
-        .document(uid)
-        .setData({'name': name, 'email': email, 'walletAmount': 0, 'gems': 0});
+    try {
+      await CloudFunctions.instance
+          .getHttpsCallable(functionName: 'addUserData')
+          .call(<String, dynamic>{'name': name, 'email': email});
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   Future updateUserProfile(
       String name, String pubg, String cod, String freefire) async {
-    String userId = await AuthService().uID();
-    await Firestore.instance.runTransaction((transaction) async {
-      await transaction.update(usersCollection.document(userId), {
+    try {
+      await CloudFunctions.instance
+          .getHttpsCallable(functionName: 'updateUserData')
+          .call(<String, dynamic>{
         'name': name,
-        'PUBG Mobile': pubg,
-        'CallOfDuty': cod,
-        'Freefire': freefire
+        'pubg': pubg,
+        'cod': cod,
+        'freefire': freefire
       });
-    });
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   Future updateUserGameName(game, id) async {
-    String userId = await AuthService().uID();
-    return await usersCollection.document(userId).updateData({game: id});
+    try {
+      await CloudFunctions.instance
+          .getHttpsCallable(functionName: 'updateUserGameName')
+          .call(<String, dynamic>{'game': game, 'id': id});
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   Future addMatchParticipants(matchId, gameName, name, game, matchNo) async {
-    String userId = await AuthService().uID();
-    return await participantsCollection.document(matchId).setData({
-      'participants': FieldValue.arrayUnion([
-        {
-          'name': name,
-          'gameName': gameName,
-          'uid': userId,
-          'matchId': matchId,
-          'game': game,
-          'matchNo': matchNo
-        }
-      ])
-    }, merge: true);
+    try {
+      await CloudFunctions.instance
+          .getHttpsCallable(functionName: 'addMatchParticipants')
+          .call(<String, dynamic>{
+        'name': name,
+        'gameName': gameName,
+        'matchId': matchId,
+        'game': game,
+        'matchNo': matchNo
+      });
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   Future addToParticipantsGroup(matchId, gameName, name, game, groupId) async {
-    String userId = await AuthService().uID();
-    return await participantsGroupCollection.document(matchId).setData({
-      groupId: FieldValue.arrayUnion([
-        {
-          'name': name,
-          'gameName': gameName,
-          'uid': userId,
-          'matchId': matchId,
-          'game': game,
-        }
-      ])
-    }, merge: true);
+    try {
+      await CloudFunctions.instance
+          .getHttpsCallable(functionName: 'addMatchParticipantsGroup')
+          .call(<String, dynamic>{
+        'name': name,
+        'gameName': gameName,
+        'matchId': matchId,
+        'game': game,
+        'groupId': groupId
+      });
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   Future addCoinsToWallet(newGems) async {
@@ -97,10 +111,13 @@ class DatabaseService {
       return value.data['gems'] ?? 0;
     });
     newGems += gems;
-    await Firestore.instance.runTransaction((transaction) async {
-      return await transaction
-          .update(usersCollection.document(userId), {'gems': newGems});
-    });
+    try {
+      await CloudFunctions.instance
+          .getHttpsCallable(functionName: 'addCoinsToWallet')
+          .call(<String, dynamic>{'newGems': newGems});
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   Future<bool> checkMatchJoined(matchId) async {
@@ -142,13 +159,13 @@ class DatabaseService {
   }
 
   Future generateUserMatchToken(matchId, id) async {
-    String userId = await AuthService().uID();
-    CollectionReference userMatchTokens =
-        Firestore.instance.collection('userMatchTokens');
-
-    await userMatchTokens.document(matchId).setData({
-      userId: {'joined': true, 'groupId': id}
-    }, merge: true);
+    try {
+      await CloudFunctions.instance
+          .getHttpsCallable(functionName: 'generateUserMatchToken')
+          .call(<String, dynamic>{'matchId': matchId, 'id': id});
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   Future sendWithdrawlrequest(amount, time, mode, mobileNo) async {
@@ -178,40 +195,29 @@ class DatabaseService {
   }
 
   Future addToSubscribedGames(
-      matchId,
-      game,
-      name,
-      ticket,
-      status,
-      imageUrl,
-      map,
-      matchNo,
-      maxPariticpants,
-      perKill,
-      prizePool,
-      time,
-      roomId,
-      roomPassword) async {
-    String userId = await AuthService().uID();
-    return await usersCollection
-        .document(userId)
-        .collection('subscribedGames')
-        .document(matchId)
-        .setData({
-      'game': game ?? '',
-      'name': name ?? '',
-      'ticket': ticket ?? 0,
-      'status': status ?? '',
-      'imageUrl': imageUrl ?? '',
-      'map': map ?? '',
-      'matchNo': matchNo ?? '',
-      'maxParticipants': maxPariticpants ?? 0,
-      'perKill': perKill ?? 0,
-      'prizePool': prizePool ?? '',
-      'time': time,
-      'roomId': roomId ?? '',
-      'roomPassword': roomPassword ?? ''
-    });
+    matchId,
+    game,
+    name,
+    imageUrl,
+    matchNo,
+    prizePool,
+    time,
+  ) async {
+    try {
+      await CloudFunctions.instance
+          .getHttpsCallable(functionName: 'addToSubscribedGames')
+          .call(<String, dynamic>{
+        'game': game,
+        'name': name,
+        'imageUrl': imageUrl,
+        'matchNo': matchNo,
+        'prizePool': prizePool,
+        'time': time,
+        'matchId': matchId
+      });
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   List<Matches> _matchListFromSnapShot(QuerySnapshot querySnapshot) {
@@ -331,31 +337,21 @@ class DatabaseService {
         .map(_matchListFromSnapShot);
   }
 
-  Stream<List<Matches>> myMatches(userId) {
+  Stream<List<MyMatches>> myMatches(userId) {
     CollectionReference subscribedMatchesCollection = Firestore.instance
         .collection('users')
         .document(userId)
         .collection('subscribedGames');
-    return subscribedMatchesCollection
-        .orderBy('time', descending: true)
-        .snapshots()
-        .map((event) {
+    return subscribedMatchesCollection.snapshots().map((event) {
       return event.documents.map((e) {
-        return Matches(
+        return MyMatches(
             game: e.data['game'] ?? '',
             name: e.data['name'] ?? '',
-            status: e.data['status'] ?? '',
-            ticket: e.data['ticket'] ?? 0,
             imageUrl: e.data['imageUrl'] ?? '',
-            map: e.data['map'] ?? '',
             matchNo: e.data['matchNo'] ?? '',
-            maxParticipants: e.data['maxParticipants'] ?? 0,
-            perKill: e.data['perKill'] ?? 0,
             prizePool: e.data['prizePool'] ?? '',
             id: e.documentID,
-            time: e.data['time'],
-            roomId: e.data['roomId'] ?? '',
-            roomPassword: e.data['roomPassword'] ?? '');
+            time: e.data['time'] ?? '');
       }).toList();
     });
   }

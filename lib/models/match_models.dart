@@ -39,6 +39,26 @@ class Matches {
       this.noOfGroups});
 }
 
+class MyMatches {
+  String game;
+  String name;
+  String imageUrl;
+  String matchNo;
+  String prizePool;
+  String id;
+  String time;
+
+  MyMatches({
+    this.game,
+    this.name,
+    this.imageUrl,
+    this.matchNo,
+    this.prizePool,
+    this.id,
+    this.time,
+  });
+}
+
 class Results {
   String gameId;
   String kills;

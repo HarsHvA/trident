@@ -16,7 +16,7 @@ class _MyMatchesTabState extends State<MyMatchesTab> {
       future: AuthService().uID(),
       builder: (context, snap) {
         if (snap.hasData) {
-          return StreamBuilder<List<Matches>>(
+          return StreamBuilder<List<MyMatches>>(
               stream: DatabaseService().myMatches(snap.data),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
@@ -30,8 +30,10 @@ class _MyMatchesTabState extends State<MyMatchesTab> {
                           );
                         }),
                   );
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error fetching data'));
                 } else {
-                  return Center(child: Text('matches to show'));
+                  return Center(child: Text('No matches to show'));
                 }
               });
         } else {

@@ -238,6 +238,7 @@ class _SignupPageState extends State<SignupPage> {
 
       print(uid);
       pr.hide();
+      Navigator.pop(context);
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => UserFeed()));
     } catch (e) {

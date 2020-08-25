@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trident/models/match_models.dart';
-import 'package:intl/intl.dart';
 import 'package:toast/toast.dart';
 import 'package:trident/services/database_services.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -8,7 +7,7 @@ import 'package:trident/views/match_details_page.dart';
 
 // ignore: must_be_immutable
 class MyMatchTile extends StatelessWidget {
-  final Matches matches;
+  final MyMatches matches;
   MyMatchTile({this.matches});
 
   String _gameName;
@@ -70,20 +69,6 @@ class MyMatchTile extends StatelessWidget {
                           ],
                         ),
                       ),
-
-                      // Positioned.fill(
-                      //   child: Align(
-                      //     alignment: Alignment.bottomLeft,
-                      //     child: Padding(
-                      //       padding: const EdgeInsets.all(10.0),
-                      //       child: AutoSizeText(
-                      //           "\u20B9" + matches.perKill.toString() + "/kill",
-                      //           style: TextStyle(
-                      //               fontSize: unitHeightValue * 2.5,
-                      //               color: Colors.white)),
-                      //     ),
-                      //   ),
-                      // )
                     ])
                   ],
                 ),
@@ -113,7 +98,7 @@ class MyMatchTile extends StatelessWidget {
                                   TableCellVerticalAlignment.fill,
                               child: Center(
                                   child: AutoSizeText(
-                                _gameTime(matches.time.toDate()),
+                                matches.time,
                                 style:
                                     TextStyle(fontSize: unitHeightValue * 1.5),
                               )))
@@ -164,10 +149,6 @@ class MyMatchTile extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  _gameTime(time) {
-    return DateFormat.yMMMd().add_jm().format(time);
   }
 
   void _showbottomsheet(context) {

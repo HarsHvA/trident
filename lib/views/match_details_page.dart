@@ -164,7 +164,7 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                       TableCellVerticalAlignment.middle,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Text("Time"),
+                                    child: Text("Starts on"),
                                   ),
                                 ),
                                 TableCell(
@@ -341,19 +341,12 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
                                                         matchId,
                                                         snapshot.data.game,
                                                         snapshot.data.name,
-                                                        snapshot.data.ticket,
-                                                        snapshot.data.status,
                                                         snapshot.data.imageUrl,
-                                                        snapshot.data.map,
                                                         snapshot.data.matchNo,
-                                                        snapshot.data
-                                                            .maxParticipants,
-                                                        snapshot.data.perKill,
                                                         snapshot.data.prizePool,
-                                                        snapshot.data.time,
-                                                        snapshot.data.roomId,
-                                                        snapshot
-                                                            .data.roomPassword,
+                                                        _gameTime(snapshot
+                                                            .data.time
+                                                            .toDate()),
                                                         snapshot
                                                             .data.noOfGroups);
                                                   } else {
@@ -762,26 +755,13 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
         ' with ' +
         '\u20B9' +
         prize +
+        //TODO: Change link
         ' Prize pool exclusively on | Trident Gaming | download link: ' +
         'https://www.iceagedev.com/download');
   }
 
-  _addUserAsParticipants(
-      matchId,
-      game,
-      name,
-      ticket,
-      status,
-      imageUrl,
-      map,
-      matchNo,
-      maxParticipants,
-      perKill,
-      prizePool,
-      time,
-      roomId,
-      roomPassword,
-      noOfGroups) async {
+  _addUserAsParticipants(matchId, game, name, imageUrl, matchNo, prizePool,
+      time, noOfGroups) async {
     pr.show();
     try {
       await DatabaseService().getUserData(game).then((value) async {
@@ -792,17 +772,10 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
         matchId,
         game,
         name,
-        ticket,
-        status,
         imageUrl,
-        map,
         matchNo,
-        maxParticipants,
-        perKill,
         prizePool,
         time,
-        roomId,
-        roomPassword,
       );
       pr.hide();
       Navigator.push(
@@ -820,23 +793,8 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
     }
   }
 
-  Future _getGemsToPlay(
-      gemsRequired,
-      matchId,
-      game,
-      name,
-      ticket,
-      status,
-      imageUrl,
-      map,
-      matchNo,
-      maxParticipants,
-      perKill,
-      prizePool,
-      time,
-      roomId,
-      roomPassword,
-      noOfGroups) async {
+  Future _getGemsToPlay(gemsRequired, matchId, game, name, imageUrl, matchNo,
+      prizePool, time, noOfGroups) async {
     String userId = await AuthService().uID();
     CollectionReference usersCollection =
         Firestore.instance.collection('users');
@@ -856,21 +814,7 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage> {
             .update(usersCollection.document(userId), {'gems': gems});
       });
       _addUserAsParticipants(
-          matchId,
-          game,
-          name,
-          ticket,
-          status,
-          imageUrl,
-          map,
-          matchNo,
-          maxParticipants,
-          perKill,
-          prizePool,
-          time,
-          roomId,
-          roomPassword,
-          noOfGroups);
+          matchId, game, name, imageUrl, matchNo, prizePool, time, noOfGroups);
     }
   }
 }
